@@ -1,1 +1,32 @@
-<h1>HI</h1>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>メモアプリ</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <h1>メモアプリ</h1>
+
+  <div id="auth">
+    <h2>ログイン / 登録</h2>
+    <input type="email" id="email" placeholder="メール">
+    <input type="password" id="password" placeholder="パスワード">
+    <button id="signup">登録</button>
+    <button id="login">ログイン</button>
+  </div>
+
+  <div id="app" style="display:none;">
+    <button id="logout">ログアウト</button>
+    <h2>メモ</h2>
+    <input type="text" id="noteTitle" placeholder="タイトル">
+    <textarea id="noteContent" placeholder="本文"></textarea>
+    <button id="saveNote">保存</button>
+
+    <h3>自分のメモ一覧</h3>
+    <ul id="notesList"></ul>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
