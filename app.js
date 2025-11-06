@@ -3,8 +3,6 @@
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // HTML 要素
