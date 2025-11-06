@@ -1,7 +1,7 @@
 // 環境変数から Supabase の URL と ANON key を取得
 // Node + バンドラー（Vite, Webpack など）使用前提
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabaseUrl = env.SUPABASE_URL;
+const supabaseKey = env.SUPABASE_ANON_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
