@@ -61,7 +61,7 @@ button {
     <button class="number" onclick="append('7')">7</button>
     <button class="number" onclick="append('8')">8</button>
     <button class="number" onclick="append('9')">9</button>
-    <button class="operator" onclick="setOp,append('+')">+</button>
+    <button class="operator" onclick="setOp('+'); append2('+')">+</button>
 
     <button class="number" onclick="append('4')">4</button>
     <button class="number" onclick="append('5')">5</button>
@@ -86,6 +86,9 @@ function append(value) {
   document.getElementById("display").innerText = current;
 }
 
+  function append2 {;
+  document.getElementById("display").innerText = current;
+}
 function clearDisplay() {
   current = "";
   previous = "";
