@@ -97,7 +97,7 @@ function clearDisplay() {
 
 function setOp(op) {
   previous = current;
-  current = "";
+  current += op;
   operation = op;
   document.getElementById("display").innerText = current;
 }
