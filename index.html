@@ -1,124 +1,116 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calc</title>
+<meta charset="utf-8">
+<title>Mini Minecraft</title>
 <style>
-body {
-  background: black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-.calculator {
-  width: 300px;
-}
-
-.display {
+body { margin: 0; overflow: hidden; }
+#info {
+  position: absolute;
+  top: 10px;
+  left: 10px;
   color: white;
-  text-align: right;
-  font-size: 48px;
-  padding: 20px;
-  word-wrap: break-word;
+  font-family: sans-serif;
 }
-
-.buttons {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-
-button {
-  height: 60px;
-  font-size: 24px;
-  border: none;
-  border-radius: 12px;
-}
-
-.number { background: #333; color: white; }
-.operator { background: orange; color: white; }
-.clear { background: gray; color: white; }
-.equal { background: green; color: white; }
-
-.zero { grid-column: span 2; }
 </style>
 </head>
 <body>
+<div id="info">クリックで開始 / 左クリック:壊す 右クリック:置く WASD移動</div>
 
-<div class="calculator">
-  <div class="display" id="display">0</div>
-  <div class="buttons">
-    <button class="clear" onclick="clearDisplay()">C</button>
-    <button class="operator" onclick="setOp('/')">÷</button>
-    <button class="operator" onclick="setOp('*')">×</button>
-    <button class="operator" onclick="setOp('-')">-</button>
-
-    <button class="number" onclick="append('7')">7</button>
-    <button class="number" onclick="append('8')">8</button>
-    <button class="number" onclick="append('9')">9</button>
-    <button class="operator" onclick="setOp('+')">+</button>
-
-    <button class="number" onclick="append('4')">4</button>
-    <button class="number" onclick="append('5')">5</button>
-    <button class="number" onclick="append('6')">6</button>
-    <button class="equal" onclick="calculate()">=</button>
-
-    <button class="number" onclick="append('1')">1</button>
-    <button class="number" onclick="append('2')">2</button>
-    <button class="number" onclick="append('3')">3</button>
-
-    <button class="number zero" onclick="append('0')">0</button>
-  </div>
-</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/PointerLockControls.js"></script>
 
 <script>
-let current = "";
-let previous = "";
-let operation = null;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87ceeb);
 
-function append(value) {
-  current += value;
-  document.getElementById("display").innerText = current;
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// 操作
+const controls = new THREE.PointerLockControls(camera, document.body);
+document.addEventListener('click', () => controls.lock());
+scene.add(controls.getObject());
+
+// 地面
+const blocks = [];
+const geometry = new THREE.BoxGeometry(1,1,1);
+const material = new THREE.MeshBasicMaterial({color: 0x55aa55});
+
+for(let x=-5;x<=5;x++){
+  for(let z=-5;z<=5;z++){
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.set(x,0,z);
+    scene.add(cube);
+    blocks.push(cube);
+  }
 }
 
+// プレイヤー
+let move = {forward:false, back:false, left:false, right:false};
 
-  
-function clearDisplay() {
-  current = "";
-  previous = "";
-  operation = null;
-  document.getElementById("display").innerText = "0";
+document.addEventListener('keydown', e=>{
+  if(e.code==="KeyW") move.forward=true;
+  if(e.code==="KeyS") move.back=true;
+  if(e.code==="KeyA") move.left=true;
+  if(e.code==="KeyD") move.right=true;
+});
+
+document.addEventListener('keyup', e=>{
+  if(e.code==="KeyW") move.forward=false;
+  if(e.code==="KeyS") move.back=false;
+  if(e.code==="KeyA") move.left=false;
+  if(e.code==="KeyD") move.right=false;
+});
+
+// レイキャスト
+const raycaster = new THREE.Raycaster();
+
+// クリック
+document.addEventListener('mousedown', e=>{
+  raycaster.setFromCamera({x:0,y:0}, camera);
+  const intersects = raycaster.intersectObjects(blocks);
+
+  if(intersects.length > 0){
+    const target = intersects[0].object;
+
+    if(e.button === 0){ // 左クリック 削除
+      scene.remove(target);
+      blocks.splice(blocks.indexOf(target),1);
+    }
+
+    if(e.button === 2){ // 右クリック 追加
+      const normal = intersects[0].face.normal;
+      const newBlock = new THREE.Mesh(geometry, material);
+      newBlock.position.copy(target.position).add(normal);
+      scene.add(newBlock);
+      blocks.push(newBlock);
+    }
+  }
+});
+
+// 右クリックメニュー消す
+window.oncontextmenu = ()=>false;
+
+// 移動
+function animate(){
+  requestAnimationFrame(animate);
+
+  const speed = 0.1;
+
+  if(move.forward) controls.moveForward(speed);
+  if(move.back) controls.moveForward(-speed);
+  if(move.left) controls.moveRight(-speed);
+  if(move.right) controls.moveRight(speed);
+
+  renderer.render(scene, camera);
 }
 
-function setOp(op) {
-  previous = current;
-  current += op;
-  operation = op;
-  document.getElementById("display").innerText = current;
-}
-
-function calculate() {
-  let result;
-  let a = parseFloat(previous);
-  let b = parseFloat(current);
-
-  if (operation === "+") result = a + b;
-  if (operation === "-") result = a - b;
-  if (operation === "*") result = a * b;
-  if (operation === "/") result = b !== 0 ? a / b : "Error";
-
-  document.getElementById("display").innerText = result;
-  current = result.toString();
-  operation = null;
-}
+camera.position.y = 2;
+animate();
 </script>
-
 </body>
 </html>
-
-  
