@@ -16,6 +16,11 @@ button {
   margin: 5px;
   font-size: 20px;
 }
+#jump {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
 #look {
   position: fixed;
   right: 0;
@@ -28,9 +33,7 @@ button {
 <body>
 
 <div id="ui">
-  <div>
-    <button id="w">↑</button>
-  </div>
+  <div><button id="w">↑</button></div>
   <div>
     <button id="a">←</button>
     <button id="s">↓</button>
@@ -38,6 +41,7 @@ button {
   </div>
 </div>
 
+<button id="jump">⤴</button>
 <div id="look"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -51,7 +55,7 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// 地面
+// ===== ブロック =====
 const blocks = [];
 const geo = new THREE.BoxGeometry(1,1,1);
 const mat = new THREE.MeshBasicMaterial({color:0x55aa55});
@@ -67,7 +71,7 @@ for(let x=-5;x<=5;x++){
 
 camera.position.set(0,2,5);
 
-// 移動
+// ===== 移動 =====
 let move = {w:false,a:false,s:false,d:false};
 
 ["w","a","s","d"].forEach(k=>{
@@ -76,10 +80,9 @@ let move = {w:false,a:false,s:false,d:false};
   btn.ontouchend = ()=> move[k]=false;
 });
 
-// 視点操作
+// ===== 視点 =====
 let rotX = 0, rotY = 0;
 const look = document.getElementById("look");
-
 let lastX, lastY;
 
 look.ontouchstart = e=>{
@@ -100,21 +103,51 @@ look.ontouchmove = e=>{
   lastY = e.touches[0].clientY;
 };
 
-// ブロック操作
+// ===== ジャンプ =====
+let velocityY = 0;
+let onGround = false;
+
+document.getElementById("jump").ontouchstart = ()=>{
+  if(onGround){
+    velocityY = 0.2;
+    onGround = false;
+  }
+};
+
+// ===== レイキャスト =====
 const raycaster = new THREE.Raycaster();
 
+let touchStartTime = 0;
+
 renderer.domElement.addEventListener("touchstart", e=>{
+  touchStartTime = Date.now();
+});
+
+renderer.domElement.addEventListener("touchend", e=>{
   raycaster.setFromCamera({x:0,y:0}, camera);
   const hit = raycaster.intersectObjects(blocks);
 
   if(hit.length > 0){
     const obj = hit[0].object;
-    scene.remove(obj);
-    blocks.splice(blocks.indexOf(obj),1);
+
+    const time = Date.now() - touchStartTime;
+
+    if(time < 200){
+      // タップ → 破壊
+      scene.remove(obj);
+      blocks.splice(blocks.indexOf(obj),1);
+    } else {
+      // 長押し → 設置
+      const normal = hit[0].face.normal;
+      const newBlock = new THREE.Mesh(geo, mat);
+      newBlock.position.copy(obj.position).add(normal);
+      scene.add(newBlock);
+      blocks.push(newBlock);
+    }
   }
 });
 
-// 描画
+// ===== 描画 =====
 function animate(){
   requestAnimationFrame(animate);
 
@@ -135,6 +168,16 @@ function animate(){
   if(move.d){
     camera.position.x += Math.cos(rotY)*speed;
     camera.position.z -= Math.sin(rotY)*speed;
+  }
+
+  // 重力
+  velocityY -= 0.01;
+  camera.position.y += velocityY;
+
+  if(camera.position.y <= 2){
+    camera.position.y = 2;
+    velocityY = 0;
+    onGround = true;
   }
 
   renderer.render(scene, camera);
