@@ -1,189 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Mini Minecraft Mobile</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TanPvP Server</title>
+
 <style>
-body { margin:0; overflow:hidden; }
-#ui {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(#0f172a, #1e293b);
+  color: white;
+  text-align: center;
 }
-button {
-  width: 60px;
-  height: 60px;
-  margin: 5px;
-  font-size: 20px;
+
+/* Header */
+header {
+  padding: 40px 20px;
 }
-#jump {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
+
+h1 {
+  font-size: 50px;
+  margin: 0;
+  color: #38bdf8;
 }
-#look {
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 50%;
-  height: 100%;
+
+p {
+  color: #cbd5f5;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 15px 25px;
+  margin: 10px;
+  background: #38bdf8;
+  color: black;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+/* Sections */
+.section {
+  margin: 40px 20px;
+}
+
+/* Box */
+.box {
+  background: #334155;
+  padding: 20px;
+  margin: 10px auto;
+  border-radius: 10px;
+  max-width: 400px;
+}
+
+/* Footer */
+footer {
+  margin-top: 50px;
+  padding: 20px;
+  font-size: 14px;
+  color: gray;
 }
 </style>
 </head>
+
 <body>
 
-<div id="ui">
-  <div><button id="w">↑</button></div>
-  <div>
-    <button id="a">←</button>
-    <button id="s">↓</button>
-    <button id="d">→</button>
+<header>
+  <h1>⚔️ TanPvP ⚔️</h1>
+  <p>Welcome to the ultimate PvP server</p>
+
+  <a class="btn" href="#">Join Now</a>
+  <a class="btn" href="#">Discord</a>
+</header>
+
+<div class="section">
+  <h2>📡 Server Info</h2>
+
+  <div class="box">
+    <p><b>IP:</b> mc.tanpvp.f5.si</p>
+    <p><b>Port:</b> 25670</p>
+    <p><b>Version:</b> 1.21.x</p>
   </div>
 </div>
 
-<button id="jump">⤴</button>
-<div id="look"></div>
+<div class="section">
+  <h2>🔥 Features</h2>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <div class="box">⚔️ Competitive PvP</div>
+  <div class="box">🏆 Tier System</div>
+  <div class="box">🎯 Smooth & Optimized</div>
+</div>
 
-<script>
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x87ceeb);
+<div class="section">
+  <h2>📷 Gallery</h2>
+  <div class="box">Add screenshots here</div>
+</div>
 
-const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(innerWidth, innerHeight);
-document.body.appendChild(renderer.domElement);
+<footer>
+  © 2026 TanPvP Server
+</footer>
 
-// ===== ブロック =====
-const blocks = [];
-const geo = new THREE.BoxGeometry(1,1,1);
-const mat = new THREE.MeshBasicMaterial({color:0x55aa55});
-
-for(let x=-5;x<=5;x++){
-  for(let z=-5;z<=5;z++){
-    const cube = new THREE.Mesh(geo, mat);
-    cube.position.set(x,0,z);
-    scene.add(cube);
-    blocks.push(cube);
-  }
-}
-
-camera.position.set(0,2,5);
-
-// ===== 移動 =====
-let move = {w:false,a:false,s:false,d:false};
-
-["w","a","s","d"].forEach(k=>{
-  const btn = document.getElementById(k);
-  btn.ontouchstart = ()=> move[k]=true;
-  btn.ontouchend = ()=> move[k]=false;
-});
-
-// ===== 視点 =====
-let rotX = 0, rotY = 0;
-const look = document.getElementById("look");
-let lastX, lastY;
-
-look.ontouchstart = e=>{
-  lastX = e.touches[0].clientX;
-  lastY = e.touches[0].clientY;
-};
-
-look.ontouchmove = e=>{
-  const dx = e.touches[0].clientX - lastX;
-  const dy = e.touches[0].clientY - lastY;
-
-  rotY -= dx * 0.005;
-  rotX -= dy * 0.005;
-
-  camera.rotation.set(rotX, rotY, 0);
-
-  lastX = e.touches[0].clientX;
-  lastY = e.touches[0].clientY;
-};
-
-// ===== ジャンプ =====
-let velocityY = 0;
-let onGround = false;
-
-document.getElementById("jump").ontouchstart = ()=>{
-  if(onGround){
-    velocityY = 0.2;
-    onGround = false;
-  }
-};
-
-// ===== レイキャスト =====
-const raycaster = new THREE.Raycaster();
-
-let touchStartTime = 0;
-
-renderer.domElement.addEventListener("touchstart", e=>{
-  touchStartTime = Date.now();
-});
-
-renderer.domElement.addEventListener("touchend", e=>{
-  raycaster.setFromCamera({x:0,y:0}, camera);
-  const hit = raycaster.intersectObjects(blocks);
-
-  if(hit.length > 0){
-    const obj = hit[0].object;
-
-    const time = Date.now() - touchStartTime;
-
-    if(time < 200){
-      // タップ → 破壊
-      scene.remove(obj);
-      blocks.splice(blocks.indexOf(obj),1);
-    } else {
-      // 長押し → 設置
-      const normal = hit[0].face.normal;
-      const newBlock = new THREE.Mesh(geo, mat);
-      newBlock.position.copy(obj.position).add(normal);
-      scene.add(newBlock);
-      blocks.push(newBlock);
-    }
-  }
-});
-
-// ===== 描画 =====
-function animate(){
-  requestAnimationFrame(animate);
-
-  const speed = 0.1;
-
-  if(move.w){
-    camera.position.x -= Math.sin(rotY)*speed;
-    camera.position.z -= Math.cos(rotY)*speed;
-  }
-  if(move.s){
-    camera.position.x += Math.sin(rotY)*speed;
-    camera.position.z += Math.cos(rotY)*speed;
-  }
-  if(move.a){
-    camera.position.x -= Math.cos(rotY)*speed;
-    camera.position.z += Math.sin(rotY)*speed;
-  }
-  if(move.d){
-    camera.position.x += Math.cos(rotY)*speed;
-    camera.position.z -= Math.sin(rotY)*speed;
-  }
-
-  // 重力
-  velocityY -= 0.01;
-  camera.position.y += velocityY;
-
-  if(camera.position.y <= 2){
-    camera.position.y = 2;
-    velocityY = 0;
-    onGround = true;
-  }
-
-  renderer.render(scene, camera);
-}
-
-animate();
-</script>
 </body>
 </html>
