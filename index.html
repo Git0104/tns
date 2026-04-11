@@ -65,11 +65,28 @@
             transition: 0.2s;
         }
 
+        .ip-box2 {
+            background: var(--card);
+            border: 2px solid #444;
+            padding: 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            min-width: 280px;
+            transition: 0.2s;
+        }
+
         .ip-box:hover {
             transform: translateY(-3px);
             border-color: var(--blue);
             box-shadow: 0 0 20px rgba(0,212,255,0.2);
         }
+
+        .ip-box2:hover {
+            transform: translateY(-3px);
+            border-color: var(--red);
+            box-shadow: 0 0 20px rgba(0,212,255,0.2);
+        }
+
 
         /* URLが青くなるのを防ぐための設定 */
         .ip-text {
@@ -139,7 +156,7 @@
                 <div class="copy-hint">- Click to copy -</div>
             </div>
 
-            <div class="ip-box" onclick="copyIP('play.tanpvp.example.com', '25671')" ">
+            <div class="ip-box2" onclick="copyIP('play.tanpvp.example.com', '25671')" ">
                 <strong style="color:var(--red)">[BEDROCK]</strong>
                 <span class="ip-text">play.tanpvp.example.com</span><br>
                 <span class="ip-text" style="color:#ffeb3b !important; margin-top:5px;">Port: 25671</span>
