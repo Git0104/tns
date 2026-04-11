@@ -3,33 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no, address=no, email=no">
     <title>TanPvP | Pure PvP Battlefield</title>
     <style>
         :root {
-            /* PvPテーマカラー: 青(Team A) vs 赤(Team B) */
             --blue: #00d4ff;
             --red: #ff4d4d;
-            --bg: #1a1a1a; /* 少し明るめの黒 */
-            --card: #252525; /* カード背景 */
+            --bg: #1a1a1a;
+            --card: #252525;
             --text: #ffffff;
             --text-sub: #b0b0b0;
         }
 
         body {
             background-color: var(--bg);
-            /* CSSだけで作る、うっすらとした「石レンガ」風の模様 */
+            /* 石畳風の幾何学パターン */
             background-image: 
                 linear-gradient(30deg, #151515 12%, transparent 12.5%, transparent 87%, #151515 87.5%, #151515),
                 linear-gradient(150deg, #151515 12%, transparent 12.5%, transparent 87%, #151515 87.5%, #151515),
-                linear-gradient(30deg, #151515 12%, transparent 12.5%, transparent 87%, #151515 87.5%, #151515),
-                linear-gradient(150deg, #151515 12%, transparent 12.5%, transparent 87%, #151515 87.5%, #151515),
-                linear-gradient(60deg, #1c1c1c 25%, transparent 25.5%, transparent 75%, #1c1c1c 75.5%, #1c1c1c),
                 linear-gradient(60deg, #1c1c1c 25%, transparent 25.5%, transparent 75%, #1c1c1c 75.5%, #1c1c1c);
             background-size: 80px 140px;
-            background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
-            
             color: var(--text);
-            font-family: 'Segoe UI', 'Courier New', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
             line-height: 1.6;
             text-align: center;
@@ -37,23 +32,20 @@
 
         header {
             padding: 150px 20px;
-            /* 青から赤へのグラデーション（対決を表現） */
-            background: linear-gradient(135deg, rgba(0,212,255,0.2) 0%, rgba(255,77,77,0.2) 100%);
+            background: linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(255,77,77,0.1) 100%);
             border-bottom: 2px solid #333;
-            position: relative;
         }
 
         h1 { 
             font-size: 5rem; 
             margin: 0; 
-            font-weight: 800;
             background: linear-gradient(to right, var(--blue), var(--red));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
         }
-        
-        .hero-desc { font-size: 1.2rem; color: var(--text-sub); margin-top: 10px; font-family: 'Courier New', monospace;}
+
+        .hero-desc { font-family: 'Courier New', monospace; color: var(--text-sub); margin-top: 10px; }
 
         .ip-container {
             display: flex;
@@ -67,50 +59,41 @@
             background: var(--card);
             border: 2px solid #444;
             padding: 25px;
-            border-radius: 5px; /* マイクラ風に角を立てる */
+            border-radius: 4px;
             cursor: pointer;
             min-width: 280px;
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
+            transition: 0.2s;
         }
 
-        /* ホバー時の演出（画像を使わずに光らせる） */
         .ip-box:hover {
             transform: translateY(-3px);
             border-color: var(--blue);
-            box-shadow: 0 0 20px rgba(0,212,255,0.3);
-        }
-        
-        .ip-box.bedrock:hover {
-            border-color: var(--red);
-            box-shadow: 0 0 20px rgba(255,77,77,0.3);
+            box-shadow: 0 0 20px rgba(0,212,255,0.2);
         }
 
-        .ip-box strong { font-size: 1.3rem; display: block; margin-bottom: 10px; letter-spacing: 2px;}
-        .ip-box span { font-family: 'Courier New', monospace; font-size: 1.1rem; color: var(--text); background: #111; padding: 2px 5px;}
+        /* URLが青くなるのを防ぐための設定 */
+        .ip-text {
+            color: var(--text) !important;
+            text-decoration: none !important;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            background: #111;
+            padding: 2px 8px;
+            display: inline-block;
+            pointer-events: none; /* テキストとしてのリンク反応を殺す */
+        }
+
+        .ip-box strong { font-size: 1.2rem; display: block; margin-bottom: 10px; }
 
         .container { max-width: 1000px; margin: auto; padding: 60px 20px; }
         
         section { margin-bottom: 80px; }
         h2 { 
             font-size: 2.2rem; 
-            margin-bottom: 40px; 
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--text);
-            position: relative;
+            letter-spacing: 2px;
+            border-bottom: 3px solid var(--blue);
             display: inline-block;
-        }
-        
-        h2::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(to right, var(--blue), var(--red));
+            margin-bottom: 40px;
         }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
@@ -118,52 +101,49 @@
         .card { 
             background: var(--card); 
             padding: 30px; 
-            border-radius: 5px; 
+            border-radius: 4px; 
             text-align: left; 
             border-left: 5px solid #444;
-            transition: 0.3s;
         }
-        
-        .card:hover { border-left-color: var(--blue); background: #2a2a2a; }
-        .card h3 { color: var(--text); margin-top: 0; font-size: 1.4rem; font-family: 'Courier New', monospace; }
-        .card p { color: var(--text-sub); }
+
+        .card h3 { font-family: 'Courier New', monospace; margin-top: 0; }
 
         .rule-card { 
             background: var(--card); 
             padding: 40px; 
-            border-radius: 5px; 
+            border-radius: 4px; 
             text-align: left; 
-            max-width: 650px; 
-            margin: auto; 
+            max-width: 600px; 
+            margin: auto;
             border: 1px solid #333;
         }
-        
-        .rule-card ul { list-style: none; padding: 0; }
-        .rule-card li { font-size: 1.1rem; margin-bottom: 15px; font-family: 'Courier New', monospace; color: var(--text-sub); }
-        .rule-card li strong { color: var(--red); margin-right: 10px; }
 
-        footer { padding: 50px; border-top: 2px solid #333; color: #555; font-size: 0.8rem; background: #151515;}
+        .rule-card ul { list-style: none; padding: 0; font-family: 'Courier New', monospace; }
+        .rule-card li { margin-bottom: 15px; }
+        .rule-card li span { color: var(--red); font-weight: bold; margin-right: 10px; }
+
+        footer { padding: 50px; border-top: 2px solid #333; color: #555; font-size: 0.8rem; }
         
-        .copy-hint { font-size: 0.7rem; color: #666; margin-top: 15px; text-transform: uppercase; }
+        .copy-hint { font-size: 0.7rem; color: #666; margin-top: 15px; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>TanPvP</h1>
-        <p class="hero-desc">&gt; PURE_PVP_BATTLEFIELD // JOIN_NOW</p>
+        <p class="hero-desc">&gt; PURE_PVP_BATTLEFIELD // English_Only</p>
 
         <div class="ip-container">
-            <div class="ip-box" onclick="copyIP('play.tanpvp.f5.si:25670')">
-                <strong style="color:var(--blue)">[JAVA_EDITION]</strong>
-                <span>play.tanpvp.f5.si:25670</span>
+            <div class="ip-box" onclick="copyIP('play.tanpvp.example.com')">
+                <strong style="color:var(--blue)">[JAVA]</strong>
+                <span class="ip-text">play.tanpvp.example.com</span>
                 <div class="copy-hint">- Click to copy -</div>
             </div>
 
-            <div class="ip-box bedrock" onclick="copyIP('play.tanpvp.example.com', '25671')">
-                <strong style="color:var(--red)">[BEDROCK_EDITION]</strong>
-                <span>IP: play.tanpvp.example.com</span><br>
-                <span style="color: #ffeb3b;">Port: 25671</span>
+            <div class="ip-box" onclick="copyIP('play.tanpvp.example.com', '25671')" style="border-color:var(--red)">
+                <strong style="color:var(--red)">[BEDROCK]</strong>
+                <span class="ip-text">play.tanpvp.example.com</span><br>
+                <span class="ip-text" style="color:#ffeb3b !important; margin-top:5px;">Port: 25671</span>
                 <div class="copy-hint">- Click to copy -</div>
             </div>
         </div>
@@ -171,48 +151,43 @@
 
     <div class="container">
         <section>
-            <h2>Server_Features</h2>
+            <h2>FEATURES</h2>
             <div class="grid">
                 <div class="card">
-                    <h3>// AFK_REWARD</h3>
-                    <p>Earn +1 Kill score every 15 minutes automatically by staying in our custom AFK Pool area.</p>
+                    <h3>// AFK_SYSTEM</h3>
+                    <p>Get +1 Kill every 15 mins in the AFK Pool. Level up while resting.</p>
                 </div>
                 <div class="card">
-                    <h3>// BLOCK_PROTECT</h3>
-                    <p>Only blocks placed by you can be broken by you. Complete protection against griefing.</p>
+                    <h3>// PROTECTION</h3>
+                    <p>Block-Protect system active. Your buildings are safe from others.</p>
                 </div>
             </div>
         </section>
 
         <section id="rules">
-            <h2>Core_Rules</h2>
+            <h2>RULES</h2>
             <div class="rule-card">
                 <ul>
-                    <li><strong>[NO]</strong> Cheating, hacking, or unfair clients.</li>
-                    <li><strong>[NO]</strong> Intentional lag or server overload.</li>
-                    <li><strong>[YES]</strong> AFK farming in the pool.</li>
-                    <li><strong>[YES]</strong> Honorable combat.</li>
+                    <li><span>[!]</span> No Cheating / Hacks</li>
+                    <li><span>[!]</span> No Server Lagging</li>
+                    <li><span>[*]</span> AFK Farming Allowed</li>
                 </ul>
             </div>
         </section>
     </div>
 
     <footer>
-        <p>TanPvP_Network // No_Images_Used // Highly_Optimized</p>
-        <p>Not affiliated with Mojang/Microsoft.</p>
+        <p>TanPvP_Network // No_Images // Optimized_CSS</p>
     </footer>
 
     <script>
         function copyIP(ip, port = "") {
             let text = ip;
-            if (port !== "") {
-                text = ip + " (Port: " + port + ")";
-            }
-            
+            if (port !== "") text = ip + " (Port: " + port + ")";
             navigator.clipboard.writeText(text).then(() => {
-                alert("Copied to clipboard!\n" + text);
-            }).catch(err => {
-                alert("Failed to copy. Please copy manually.");
+                alert("Copied: " + text);
+            }).catch(() => {
+                alert("Please copy manually: " + text);
             });
         }
     </script>
