@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -17,7 +16,7 @@
         body {
             background-color: var(--bg);
             color: var(--text);
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', "Microsoft YaHei", sans-serif;
             margin: 0;
             text-align: center;
         }
@@ -28,17 +27,19 @@
             top: 20px;
             right: 20px;
             z-index: 1000;
+            display: flex;
+            gap: 5px;
         }
 
         .lang-btn {
             background: #333;
             color: white;
             border: 1px solid var(--primary);
-            padding: 8px 15px;
+            padding: 8px 12px;
             cursor: pointer;
             border-radius: 5px;
-            margin-left: 5px;
             transition: 0.3s;
+            font-size: 0.8rem;
         }
 
         .lang-btn.active {
@@ -77,22 +78,26 @@
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .card { background: var(--card); padding: 20px; border-radius: 10px; text-align: left; }
         
-        /* 言語要素の制御 */
-        [lang="en"] { display: none; } /* 初期状態は日本語を表示 */
+        /* 言語要素の初期非表示設定 */
+        [lang="en"], [lang="zh"] { display: none; }
     </style>
 </head>
 <body>
 
     <div class="lang-switch">
-        <button class="lang-btn active" onclick="setLanguage('ja')">JP</button>
-        <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn active" data-lang="ja" onclick="setLanguage('ja')">JP</button>
+        <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">ZH</button>
     </div>
 
     <header>
-        <h1 id="title-ja">TanPvP サーバー</h1>
-        <h1 id="title-en" lang="en">TanPvP Server</h1>
-        <p id="desc-ja">最強のPvP体験を今すぐ始めよう</p>
-        <p id="desc-en" lang="en">Start your ultimate PvP experience now.</p>
+        <h1 id="t-ja">TanPvP サーバー</h1>
+        <h1 id="t-en" lang="en">TanPvP Server</h1>
+        <h1 id="t-zh" lang="zh">TanPvP 服务器</h1>
+        
+        <p id="d-ja">最強のPvP体験を今すぐ始めよう</p>
+        <p id="d-en" lang="en">Start your ultimate PvP experience now.</p>
+        <p id="d-zh" lang="zh">立即开启您的终极 PvP 体验</p>
 
         <div class="ip-container">
             <div class="ip-box" onclick="copyIP('play.tanpvp.example.com')">
@@ -109,38 +114,49 @@
 
     <div class="container">
         <section>
-            <h2 id="feature-title-ja">サーバーの特徴</h2>
-            <h2 id="feature-title-en" lang="en">Features</h2>
+            <h2 id="ft-ja">サーバーの特徴</h2>
+            <h2 id="ft-en" lang="en">Features</h2>
+            <h2 id="ft-zh" lang="zh">服务器特色</h2>
             
             <div class="grid">
                 <div class="card">
                     <h3 id="f1-ja">放置でキル獲得</h3>
                     <h3 id="f1-en" lang="en">AFK Kill Gain</h3>
+                    <h3 id="f1-zh" lang="zh">挂机获得击杀数</h3>
                     <p id="f1d-ja">AFKプールに15分間滞在するだけで、1 Killを獲得できます。</p>
                     <p id="f1d-en" lang="en">Stay in the AFK pool for 15 minutes to earn 1 Kill.</p>
+                    <p id="f1d-zh" lang="zh">在掛機池中停留 15 分鐘即可獲得 1 個擊殺数。</p>
                 </div>
                 <div class="card">
                     <h3 id="f2-ja">ブロック保護</h3>
                     <h3 id="f2-en" lang="en">Block Protect</h3>
+                    <h3 id="f2-zh" lang="zh">方块保护</h3>
                     <p id="f2d-ja">自分が設置したブロックのみ破壊可能。荒らし対策も万全です。</p>
                     <p id="f2d-en" lang="en">Only blocks you placed can be broken. Anti-grief system active.</p>
+                    <p id="f2d-zh" lang="zh">只能破坏自己放置的方块。具备完美的防熊孩子系统。</p>
                 </div>
             </div>
         </section>
 
         <section style="margin-top: 50px;">
-            <h2 id="rule-title-ja">ルール</h2>
-            <h2 id="rule-title-en" lang="en">Rules</h2>
+            <h2 id="rt-ja">ルール</h2>
+            <h2 id="rt-en" lang="en">Rules</h2>
+            <h2 id="rt-zh" lang="zh">服务器规则</h2>
             <div class="card">
-                <ul id="rule-list-ja" style="list-style: none; padding: 0;">
+                <ul id="rl-ja" style="list-style: none; padding: 0;">
                     <li>❌ チート・ハック行為の禁止</li>
                     <li>❌ サーバー負荷行為の禁止</li>
                     <li>✅ 放置キル獲得の推奨</li>
                 </ul>
-                <ul id="rule-list-en" lang="en" style="list-style: none; padding: 0;">
+                <ul id="rl-en" lang="en" style="list-style: none; padding: 0;">
                     <li>❌ No Cheating / Hacking</li>
                     <li>❌ No Lag-inducing activities</li>
                     <li>✅ AFK farming is encouraged!</li>
+                </ul>
+                <ul id="rl-zh" lang="zh" style="list-style: none; padding: 0;">
+                    <li>❌ 禁止使用外挂/作弊</li>
+                    <li>❌ 禁止恶意导致服务器卡顿</li>
+                    <li>✅ 推荐使用挂机池获取击杀</li>
                 </ul>
             </div>
         </section>
@@ -151,213 +167,34 @@
     </footer>
 
     <script>
-        // 言語切り替えロジック
         function setLanguage(lang) {
-            const jaElements = document.querySelectorAll('[id$="-ja"]');
-            const enElements = document.querySelectorAll('[lang="en"]');
-            const buttons = document.querySelectorAll('.lang-btn');
-
-            if (lang === 'ja') {
-                jaElements.forEach(el => el.style.display = 'block');
-                enElements.forEach(el => el.style.display = 'none');
-                buttons[0].classList.add('active');
-                buttons[1].classList.remove('active');
-            } else {
-                jaElements.forEach(el => el.style.display = 'none');
-                enElements.forEach(el => el.style.display = 'block');
-                buttons[0].classList.remove('active');
-                buttons[1].classList.add('active');
-            }
-        }
-
-        // IPコピーロジック
-        function copyIP(ip, port = "") {
-            let text = ip;
-            if (port !== "") text = ip + " Port: " + port;
-            navigator.clipboard.writeText(text).then(() => {
-                alert(ip + (port ? " Port:" + port : "") + "\nCopied!");
+            // 全ての言語要素を取得
+            const allLangs = ['ja', 'en', 'zh'];
+            
+            allLangs.forEach(l => {
+                const elements = document.querySelectorAll(`[id$="-${l}"], [lang="${l}"]`);
+                elements.forEach(el => {
+                    // 日本語(ja)はIDで制御、それ以外はlang属性で制御しているため両方チェック
+                    if (l === lang) {
+                        el.style.display = (el.tagName === 'UL' || el.tagName === 'DIV') ? 'block' : 'inline-block';
+                        if (el.tagName === 'H1' || el.tagName === 'H2' || el.tagName === 'H3' || el.tagName === 'P') el.style.display = 'block';
+                    } else {
+                        el.style.display = 'none';
+                    }
+                });
+                
+                // ボタンの active クラス切り替え
+                const btn = document.querySelector(`.lang-btn[data-lang="${l}"]`);
+                if (l === lang) btn.classList.add('active');
+                else btn.classList.remove('active');
             });
         }
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TanPvP Official</title>
-    <style>
-        :root {
-            --primary: #00d4ff;
-            --secondary: #55ff55;
-            --bg: #121212;
-            --card: #1e1e1e;
-            --text: #ffffff;
-        }
 
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            text-align: center;
-        }
-
-        /* 言語切り替えボタン */
-        .lang-switch {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-
-        .lang-btn {
-            background: #333;
-            color: white;
-            border: 1px solid var(--primary);
-            padding: 8px 15px;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-left: 5px;
-            transition: 0.3s;
-        }
-
-        .lang-btn.active {
-            background: var(--primary);
-            color: black;
-        }
-
-        header {
-            padding: 100px 20px;
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1587573089734-09cb69c0f2b4?q=80&w=1000');
-            background-size: cover;
-        }
-
-        .ip-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 30px;
-        }
-
-        .ip-box {
-            background: var(--card);
-            border: 2px solid var(--primary);
-            padding: 20px;
-            border-radius: 15px;
-            cursor: pointer;
-            min-width: 250px;
-            transition: 0.3s;
-        }
-
-        .ip-box:hover { transform: scale(1.05); background: #252525; }
-
-        .container { max-width: 900px; margin: auto; padding: 50px 20px; }
-        
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: var(--card); padding: 20px; border-radius: 10px; text-align: left; }
-        
-        /* 言語要素の制御 */
-        [lang="en"] { display: none; } /* 初期状態は日本語を表示 */
-    </style>
-</head>
-<body>
-
-    <div class="lang-switch">
-        <button class="lang-btn active" onclick="setLanguage('ja')">JP</button>
-        <button class="lang-btn" onclick="setLanguage('en')">EN</button>
-    </div>
-
-    <header>
-        <h1 id="title-ja">TanPvP サーバー</h1>
-        <h1 id="title-en" lang="en">TanPvP Server</h1>
-        <p id="desc-ja">最強のPvP体験を今すぐ始めよう</p>
-        <p id="desc-en" lang="en">Start your ultimate PvP experience now.</p>
-
-        <div class="ip-container">
-            <div class="ip-box" onclick="copyIP('play.tanpvp.example.com')">
-                <strong style="color:var(--primary)">Java Edition</strong><br>
-                play.tanpvp.example.com
-            </div>
-            <div class="ip-box" onclick="copyIP('play.tanpvp.example.com', '25671')" style="border-color:var(--secondary)">
-                <strong style="color:var(--secondary)">Bedrock Edition</strong><br>
-                IP: play.tanpvp.example.com<br>
-                Port: 25671
-            </div>
-        </div>
-    </header>
-
-    <div class="container">
-        <section>
-            <h2 id="feature-title-ja">サーバーの特徴</h2>
-            <h2 id="feature-title-en" lang="en">Features</h2>
-            
-            <div class="grid">
-                <div class="card">
-                    <h3 id="f1-ja">放置でキル獲得</h3>
-                    <h3 id="f1-en" lang="en">AFK Kill Gain</h3>
-                    <p id="f1d-ja">AFKプールに15分間滞在するだけで、1 Killを獲得できます。</p>
-                    <p id="f1d-en" lang="en">Stay in the AFK pool for 15 minutes to earn 1 Kill.</p>
-                </div>
-                <div class="card">
-                    <h3 id="f2-ja">ブロック保護</h3>
-                    <h3 id="f2-en" lang="en">Block Protect</h3>
-                    <p id="f2d-ja">自分が設置したブロックのみ破壊可能。荒らし対策も万全です。</p>
-                    <p id="f2d-en" lang="en">Only blocks you placed can be broken. Anti-grief system active.</p>
-                </div>
-            </div>
-        </section>
-
-        <section style="margin-top: 50px;">
-            <h2 id="rule-title-ja">ルール</h2>
-            <h2 id="rule-title-en" lang="en">Rules</h2>
-            <div class="card">
-                <ul id="rule-list-ja" style="list-style: none; padding: 0;">
-                    <li>❌ チート・ハック行為の禁止</li>
-                    <li>❌ サーバー負荷行為の禁止</li>
-                    <li>✅ 放置キル獲得の推奨</li>
-                </ul>
-                <ul id="rule-list-en" lang="en" style="list-style: none; padding: 0;">
-                    <li>❌ No Cheating / Hacking</li>
-                    <li>❌ No Lag-inducing activities</li>
-                    <li>✅ AFK farming is encouraged!</li>
-                </ul>
-            </div>
-        </section>
-    </div>
-
-    <footer>
-        <p>&copy; 2026 TanPvP Server</p>
-    </footer>
-
-    <script>
-        // 言語切り替えロジック
-        function setLanguage(lang) {
-            const jaElements = document.querySelectorAll('[id$="-ja"]');
-            const enElements = document.querySelectorAll('[lang="en"]');
-            const buttons = document.querySelectorAll('.lang-btn');
-
-            if (lang === 'ja') {
-                jaElements.forEach(el => el.style.display = 'block');
-                enElements.forEach(el => el.style.display = 'none');
-                buttons[0].classList.add('active');
-                buttons[1].classList.remove('active');
-            } else {
-                jaElements.forEach(el => el.style.display = 'none');
-                enElements.forEach(el => el.style.display = 'block');
-                buttons[0].classList.remove('active');
-                buttons[1].classList.add('active');
-            }
-        }
-
-        // IPコピーロジック
         function copyIP(ip, port = "") {
             let text = ip;
-            if (port !== "") text = ip + " Port: " + port;
+            if (port !== "") text = ip + " (Port: " + port + ")";
             navigator.clipboard.writeText(text).then(() => {
-                alert(ip + (port ? " Port:" + port : "") + "\nCopied!");
+                alert("Copied!\n" + text);
             });
         }
     </script>
