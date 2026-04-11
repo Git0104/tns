@@ -85,7 +85,7 @@
 <body>
 
     <div class="lang-switch">
-        <button class="lang-btn active" data-lang="ja" onclick="setLanguage('ja')">JP</button>
+        <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">JP</button>
         <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
         <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">ZH</button>
     </div>
@@ -125,7 +125,7 @@
                     <h3 id="f1-zh" lang="zh">挂机获得击杀数</h3>
                     <p id="f1d-ja">AFKプールに15分間滞在するだけで、1 Killを獲得できます。</p>
                     <p id="f1d-en" lang="en">Stay in the AFK pool for 15 minutes to earn 1 Kill.</p>
-                    <p id="f1d-zh" lang="zh">在掛機池中停留 15 分鐘即可獲得 1 個擊殺数。</p>
+                    <p id="f1d-zh" lang="zh">在挂机池中停留 15 分钟即可获得 1 个击杀数。</p>
                 </div>
                 <div class="card">
                     <h3 id="f2-ja">ブロック保護</h3>
@@ -167,28 +167,43 @@
     </footer>
 
     <script>
+        // 言語切り替えのメインロジック
         function setLanguage(lang) {
-            // 全ての言語要素を取得
             const allLangs = ['ja', 'en', 'zh'];
             
             allLangs.forEach(l => {
                 const elements = document.querySelectorAll(`[id$="-${l}"], [lang="${l}"]`);
                 elements.forEach(el => {
-                    // 日本語(ja)はIDで制御、それ以外はlang属性で制御しているため両方チェック
                     if (l === lang) {
-                        el.style.display = (el.tagName === 'UL' || el.tagName === 'DIV') ? 'block' : 'inline-block';
-                        if (el.tagName === 'H1' || el.tagName === 'H2' || el.tagName === 'H3' || el.tagName === 'P') el.style.display = 'block';
+                        // 表示形式の調整
+                        if (['UL', 'DIV', 'H1', 'H2', 'H3', 'P'].includes(el.tagName)) {
+                            el.style.display = 'block';
+                        } else {
+                            el.style.display = 'inline-block';
+                        }
                     } else {
                         el.style.display = 'none';
                     }
                 });
                 
-                // ボタンの active クラス切り替え
+                // ボタンの active クラスを更新
                 const btn = document.querySelector(`.lang-btn[data-lang="${l}"]`);
-                if (l === lang) btn.classList.add('active');
-                else btn.classList.remove('active');
+                if (btn) {
+                    if (l === lang) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                }
             });
         }
+
+        // ページ読み込み時にURLパラメータ (?l=en など) をチェック
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const lang = urlParams.get('l');
+            
+            if (lang === 'en') setLanguage('en');
+            else if (lang === 'zh') setLanguage('zh');
+            else setLanguage('ja'); // 何もなければ日本語
+        };
 
         function copyIP(ip, port = "") {
             let text = ip;
