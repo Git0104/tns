@@ -1,114 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TanPvP Server</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TanPvP Official Website</title>
+    <style>
+        /* 全体のスタイル */
+        :root {
+            --primary-color: #00d4ff;
+            --bg-dark: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #ffffff;
+            --text-sub: #b0b0b0;
+        }
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(#0f172a, #1e293b);
-  color: white;
-  text-align: center;
-}
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            line-height: 1.6;
+        }
 
-header {
-  padding: 40px 20px;
-}
+        header {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1587573089734-09cb69c0f2b4?auto=format&fit=crop&q=80&w=1000');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
 
-h1 {
-  font-size: 50px;
-  margin: 0;
-  color: #38bdf8;
-}
+        h1 { font-size: 4rem; margin: 0; color: var(--primary-color); text-shadow: 0 0 20px rgba(0,212,255,0.5); }
+        
+        .server-ip {
+            background: rgba(255,255,255,0.1);
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: 2px solid var(--primary-color);
+            font-size: 1.5rem;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .server-ip:hover { background: var(--primary-color); color: black; }
 
-p {
-  color: #cbd5f5;
-}
+        .container { max-width: 1000px; margin: auto; padding: 40px 20px; }
 
-.btn {
-  display: inline-block;
-  padding: 15px 25px;
-  margin: 10px;
-  background: #38bdf8;
-  color: black;
-  text-decoration: none;
-  border-radius: 10px;
-  font-weight: bold;
-}
+        section { margin-bottom: 60px; }
+        h2 { border-left: 5px solid var(--primary-color); padding-left: 15px; margin-bottom: 30px; }
 
-.section {
-  margin: 40px 20px;
-}
+        /* カードデザイン */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { color: var(--primary-color); margin-top: 0; }
 
-.box {
-  background: #334155;
-  padding: 20px;
-  margin: 10px auto;
-  border-radius: 10px;
-  max-width: 400px;
-}
+        /* ルールセクション */
+        .rules-list { background: var(--card-bg); padding: 25px; border-radius: 15px; }
+        .rules-list li { margin-bottom: 15px; border-bottom: 1px dotted #444; padding-bottom: 5px; list-style: none; }
+        .rules-list li span { color: #ff4d4d; font-weight: bold; margin-right: 10px; }
 
-/* Tier色 */
-.tier-s { background: #facc15; color: black; }
-.tier-a { background: #60a5fa; }
-.tier-b { background: #34d399; }
-.tier-c { background: #a78bfa; }
-.tier-d { background: #f87171; }
-
-footer {
-  margin-top: 50px;
-  padding: 20px;
-  font-size: 14px;
-  color: gray;
-}
-</style>
+        footer { text-align: center; padding: 40px; color: var(--text-sub); font-size: 0.9rem; }
+        
+        .badge { background: #333; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; vertical-align: middle; }
+    </style>
 </head>
-
 <body>
 
 <header>
-  <h1>⚔️ TanPvP ⚔️</h1>
-  <p>Free For All PvP Server</p>
-
-  <a class="btn" href="#">Join Now</a>
-  <a class="btn" href="#">Discord</a>
+    <h1>TanPvP</h1>
+    <p>究極のPvP体験を、あなたの手に。</p>
+    <div class="server-ip" onclick="copyIP()">IP: play.tanpvp.example.com</div>
+    <p style="font-size: 0.8rem; color: #ccc; margin-top: 10px;">クリックでIPをコピー</p>
 </header>
 
-<div class="section">
-  <h2>📡 Server Info</h2>
+<div class="container">
 
-  <div class="box">
-    <p><b>IP:</b> mc.tanpvp.f5.si</p>
-    <p><b>Port:</b> 25670</p>
-    <p><b>Version:</b> 1.21.x</p>
-  </div>
-</div>
+    <section>
+        <h2>About TanPvP</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>🌊 AFK Pool System</h3>
+                <p>特定の水の中に滞在することで、15分ごとに1 Killを獲得できます。放置している間もスコアを伸ばしましょう。</p>
+            </div>
+            <div class="card">
+                <h3>⚔️ Custom Kits</h3>
+                <p>Default、VIP、VIP+など、多彩なキットを用意。各プレイスタイルに合わせた装備で戦場を支配せよ。</p>
+            </div>
+            <div class="card">
+                <h3>🛡️ Block Protection</h3>
+                <p>自分が設置したブロックのみ破壊可能。マップの美しさを保ちつつ、戦略的な建築が可能です。</p>
+            </div>
+        </div>
+    </section>
 
-<div class="section">
-  <h2>🔥 Features</h2>
+    <section id="rules">
+        <h2>Server Rules</h2>
+        <div class="rules-list">
+            <ul>
+                <li><span>禁止</span> チートツールの使用 (Killaura, Fly, etc...)</li>
+                <li><span>禁止</span> 意図的なラグの発生、サーバー負荷行為</li>
+                <li><span>禁止</span> 他プレイヤーへの過度な暴言、嫌がらせ</li>
+                <li><span>許可</span> 自分が設置したブロックの破壊</li>
+                <li><span>重要</span> AFKプールでの放置（推奨されています！）</li>
+            </ul>
+        </div>
+    </section>
 
-  <div class="box">⚔️ FFA PvP (No Teams)</div>
-  <div class="box">🏆 Tier System</div>
-  <div class="box">👥 Fight Anyone Freely</div>
-  <div class="box">🎯 Smooth & Optimized</div>
-</div>
+    <section id="kits">
+        <h2>Available Kits</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Default <span class="badge">FREE</span></h3>
+                <p>鉄装備一式。全てのプレイヤーが最初から使用可能な基本セット。</p>
+            </div>
+            <div class="card" style="border: 1px solid #ffd700;">
+                <h3>VIP+ <span class="badge" style="background:#ffd700; color: black;">RANK</span></h3>
+                <p>強力なポーション効果と、ダイヤ装備の一部が付与される上級者向けキット。</p>
+            </div>
+        </div>
+    </section>
 
-<div class="section">
-  <h2>🏆 Tier List</h2>
-
-  <div class="box tier-s"><b>S Tier</b> - Top Players</div>
-  <div class="box tier-a"><b>A Tier</b> - Very Strong</div>
-  <div class="box tier-b"><b>B Tier</b> - Skilled</div>
-  <div class="box tier-c"><b>C Tier</b> - Average</div>
-  <div class="box tier-d"><b>D Tier</b> - Beginner</div>
 </div>
 
 <footer>
-  © 2026 TanPvP Server
+    &copy; 2026 TanPvP Server Network. Built with GitHub Pages.<br>
+    This website is not affiliated with Mojang AB.
 </footer>
+
+<script>
+    function copyIP() {
+        const ip = "play.tanpvp.example.com";
+        navigator.clipboard.writeText(ip).then(() => {
+            alert("サーバーIPをコピーしました！: " + ip);
+        });
+    }
+</script>
 
 </body>
 </html>
