@@ -3,138 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TanPvP | Ultimate Minecraft PvP Experience</title>
+    <title>TanPvP | Pure PvP Battlefield</title>
     <style>
         :root {
-            --primary: #00d4ff;
-            --secondary: #55ff55;
-            --bg: #121212;
-            --card: #1e1e1e;
+            /* PvPテーマカラー: 青(Team A) vs 赤(Team B) */
+            --blue: #00d4ff;
+            --red: #ff4d4d;
+            --bg: #1a1a1a; /* 少し明るめの黒 */
+            --card: #252525; /* カード背景 */
             --text: #ffffff;
             --text-sub: #b0b0b0;
         }
 
         body {
             background-color: var(--bg);
+            /* CSSだけで作る、うっすらとした「石レンガ」風の模様 */
+            background-image: 
+                linear-gradient(30deg, #151515 12%, transparent 12.5%, transparent 87%, #151515 87.5%, #151515),
+                linear-gradient(150deg, #151515 12%, transparent 12.5%, transparent 87%, #151515 87.5%, #151515),
+                linear-gradient(30deg, #151515 12%, transparent 12.5%, transparent 87%, #151515 87.5%, #151515),
+                linear-gradient(150deg, #151515 12%, transparent 12.5%, transparent 87%, #151515 87.5%, #151515),
+                linear-gradient(60deg, #1c1c1c 25%, transparent 25.5%, transparent 75%, #1c1c1c 75.5%, #1c1c1c),
+                linear-gradient(60deg, #1c1c1c 25%, transparent 25.5%, transparent 75%, #1c1c1c 75.5%, #1c1c1c);
+            background-size: 80px 140px;
+            background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+            
             color: var(--text);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Courier New', sans-serif;
             margin: 0;
             line-height: 1.6;
             text-align: center;
         }
 
         header {
-            padding: 120px 20px;
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1587573089734-09cb69c0f2b4?q=80&w=1000');
-            background-size: cover;
-            background-position: center;
+            padding: 150px 20px;
+            /* 青から赤へのグラデーション（対決を表現） */
+            background: linear-gradient(135deg, rgba(0,212,255,0.2) 0%, rgba(255,77,77,0.2) 100%);
+            border-bottom: 2px solid #333;
+            position: relative;
         }
 
-        h1 { font-size: 4.5rem; margin: 0; color: var(--primary); text-shadow: 0 0 20px rgba(0,212,255,0.5); }
-        .hero-desc { font-size: 1.2rem; color: var(--text-sub); margin-top: 10px; }
+        h1 { 
+            font-size: 5rem; 
+            margin: 0; 
+            font-weight: 800;
+            background: linear-gradient(to right, var(--blue), var(--red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+        }
+        
+        .hero-desc { font-size: 1.2rem; color: var(--text-sub); margin-top: 10px; font-family: 'Courier New', monospace;}
 
         .ip-container {
             display: flex;
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
-            margin-top: 40px;
+            margin-top: 50px;
         }
 
         .ip-box {
             background: var(--card);
-            border: 2px solid var(--primary);
+            border: 2px solid #444;
             padding: 25px;
-            border-radius: 15px;
+            border-radius: 5px; /* マイクラ風に角を立てる */
             cursor: pointer;
             min-width: 280px;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .ip-box:hover { transform: translateY(-5px); background: #252525; box-shadow: 0 15px 40px rgba(0,212,255,0.2); }
-        .ip-box strong { font-size: 1.4rem; display: block; margin-bottom: 5px; }
-        .ip-box span { font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; }
+        /* ホバー時の演出（画像を使わずに光らせる） */
+        .ip-box:hover {
+            transform: translateY(-3px);
+            border-color: var(--blue);
+            box-shadow: 0 0 20px rgba(0,212,255,0.3);
+        }
+        
+        .ip-box.bedrock:hover {
+            border-color: var(--red);
+            box-shadow: 0 0 20px rgba(255,77,77,0.3);
+        }
+
+        .ip-box strong { font-size: 1.3rem; display: block; margin-bottom: 10px; letter-spacing: 2px;}
+        .ip-box span { font-family: 'Courier New', monospace; font-size: 1.1rem; color: var(--text); background: #111; padding: 2px 5px;}
 
         .container { max-width: 1000px; margin: auto; padding: 60px 20px; }
         
         section { margin-bottom: 80px; }
-        h2 { font-size: 2.5rem; margin-bottom: 40px; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 10px; }
+        h2 { 
+            font-size: 2.2rem; 
+            margin-bottom: 40px; 
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text);
+            position: relative;
+            display: inline-block;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, var(--blue), var(--red));
+        }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .card { background: var(--card); padding: 30px; border-radius: 15px; text-align: left; transition: 0.3s; }
-        .card:hover { transform: translateY(-5px); }
-        .card h3 { color: var(--primary); margin-top: 0; font-size: 1.5rem; }
+        
+        .card { 
+            background: var(--card); 
+            padding: 30px; 
+            border-radius: 5px; 
+            text-align: left; 
+            border-left: 5px solid #444;
+            transition: 0.3s;
+        }
+        
+        .card:hover { border-left-color: var(--blue); background: #2a2a2a; }
+        .card h3 { color: var(--text); margin-top: 0; font-size: 1.4rem; font-family: 'Courier New', monospace; }
         .card p { color: var(--text-sub); }
 
-        .rule-card { background: var(--card); padding: 40px; border-radius: 15px; text-align: left; max-width: 600px; margin: auto; }
-        .rule-card ul { list-style: none; padding: 0; }
-        .rule-card li { font-size: 1.1rem; margin-bottom: 15px; display: flex; align-items: center; }
-        .rule-card li::before { content: "•"; color: var(--primary); font-weight: bold; display: inline-block; width: 1em; margin-left: -1em; }
-
-        footer { padding: 50px; border-top: 1px solid #333; color: var(--text-sub); font-size: 0.9rem; }
+        .rule-card { 
+            background: var(--card); 
+            padding: 40px; 
+            border-radius: 5px; 
+            text-align: left; 
+            max-width: 650px; 
+            margin: auto; 
+            border: 1px solid #333;
+        }
         
-        .copy-hint { font-size: 0.8rem; color: #888; margin-top: 10px; }
+        .rule-card ul { list-style: none; padding: 0; }
+        .rule-card li { font-size: 1.1rem; margin-bottom: 15px; font-family: 'Courier New', monospace; color: var(--text-sub); }
+        .rule-card li strong { color: var(--red); margin-right: 10px; }
+
+        footer { padding: 50px; border-top: 2px solid #333; color: #555; font-size: 0.8rem; background: #151515;}
+        
+        .copy-hint { font-size: 0.7rem; color: #666; margin-top: 15px; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>TanPvP</h1>
-        <p class="hero-desc">The ultimate battlefield. Join the fight today.</p>
+        <p class="hero-desc">&gt; PURE_PVP_BATTLEFIELD // JOIN_NOW</p>
 
         <div class="ip-container">
             <div class="ip-box" onclick="copyIP('play.tanpvp.example.com')">
-                <strong style="color:var(--primary)">Java Edition</strong>
+                <strong style="color:var(--blue)">[JAVA_EDITION]</strong>
                 <span>play.tanpvp.example.com</span>
-                <div class="copy-hint">Click to copy</div>
+                <div class="copy-hint">- Click to copy -</div>
             </div>
 
-            <div class="ip-box" onclick="copyIP('play.tanpvp.example.com', '25671')" style="border-color:var(--secondary)">
-                <strong style="color:var(--secondary)">Bedrock Edition</strong>
+            <div class="ip-box bedrock" onclick="copyIP('play.tanpvp.example.com', '25671')">
+                <strong style="color:var(--red)">[BEDROCK_EDITION]</strong>
                 <span>IP: play.tanpvp.example.com</span><br>
                 <span style="color: #ffeb3b;">Port: 25671</span>
-                <div class="copy-hint">Click to copy</div>
+                <div class="copy-hint">- Click to copy -</div>
             </div>
         </div>
     </header>
 
     <div class="container">
         <section>
-            <h2>Unique Features</h2>
+            <h2>Server_Features</h2>
             <div class="grid">
                 <div class="card">
-                    <h3>💎 AFK Reward</h3>
-                    <p>Earn 1 Kill score every 15 minutes by staying in our custom AFK Pool. Level up even while you're away!</p>
+                    <h3>// AFK_REWARD</h3>
+                    <p>Earn +1 Kill score every 15 minutes automatically by staying in our custom AFK Pool area.</p>
                 </div>
                 <div class="card">
-                    <h3>🛡️ Secure Building</h3>
-                    <p>Our Block-Protection system ensures that only blocks placed by you can be broken by you. Anti-griefing at its best.</p>
-                </div>
-                <div class="card">
-                    <h3>⚔️ Balanced PvP</h3>
-                    <p>Experience fair combat with our custom kits and optimized server performance for low latency.</p>
+                    <h3>// BLOCK_PROTECT</h3>
+                    <p>Only blocks placed by you can be broken by you. Complete protection against griefing.</p>
                 </div>
             </div>
         </section>
 
         <section id="rules">
-            <h2>Server Rules</h2>
+            <h2>Core_Rules</h2>
             <div class="rule-card">
                 <ul>
-                    <li>No cheating, hacking, or use of unfair clients.</li>
-                    <li>No intentional lag-inducing activities.</li>
-                    <li>Respect all players in the community.</li>
-                    <li>AFK farming in the designated pool is encouraged!</li>
-                    <li>Have fun and fight honorably.</li>
+                    <li><strong>[NO]</strong> Cheating, hacking, or unfair clients.</li>
+                    <li><strong>[NO]</strong> Intentional lag or server overload.</li>
+                    <li><strong>[YES]</strong> AFK farming in the pool.</li>
+                    <li><strong>[YES]</strong> Honorable combat.</li>
                 </ul>
             </div>
         </section>
     </div>
 
     <footer>
-        <p>&copy; 2026 TanPvP Network. All rights reserved.</p>
-        <p style="font-size: 0.7rem; margin-top: 10px;">Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft.</p>
+        <p>TanPvP_Network // No_Images_Used // Highly_Optimized</p>
+        <p>Not affiliated with Mojang/Microsoft.</p>
     </footer>
 
     <script>
@@ -147,7 +212,7 @@
             navigator.clipboard.writeText(text).then(() => {
                 alert("Copied to clipboard!\n" + text);
             }).catch(err => {
-                console.error('Failed to copy: ', err);
+                alert("Failed to copy. Please copy manually.");
             });
         }
     </script>
