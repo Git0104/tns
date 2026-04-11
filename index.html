@@ -183,7 +183,7 @@
     <script>
         function copyIP(ip, port = "") {
             let text = ip;
-            if (port !== "") text = ip + " (Port: " + port + ")";
+            if (port !== "") text = ip + " \n(Port: " + port + ")";
             navigator.clipboard.writeText(text).then(() => {
                 alert("Copied: " + text);
             }).catch(() => {
