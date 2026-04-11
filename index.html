@@ -1,151 +1,365 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TanPvP Official Website</title>
+    <title>TanPvP Official</title>
     <style>
-        /* 全体のスタイル */
         :root {
-            --primary-color: #00d4ff;
-            --bg-dark: #121212;
-            --card-bg: #1e1e1e;
-            --text-main: #ffffff;
-            --text-sub: #b0b0b0;
+            --primary: #00d4ff;
+            --secondary: #55ff55;
+            --bg: #121212;
+            --card: #1e1e1e;
+            --text: #ffffff;
         }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
-            line-height: 1.6;
-        }
-
-        header {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1587573089734-09cb69c0f2b4?auto=format&fit=crop&q=80&w=1000');
-            background-size: cover;
-            background-position: center;
-            height: 60vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             text-align: center;
         }
 
-        h1 { font-size: 4rem; margin: 0; color: var(--primary-color); text-shadow: 0 0 20px rgba(0,212,255,0.5); }
-        
-        .server-ip {
-            background: rgba(255,255,255,0.1);
-            padding: 15px 30px;
-            border-radius: 50px;
-            border: 2px solid var(--primary-color);
-            font-size: 1.5rem;
-            margin-top: 20px;
+        /* 言語切り替えボタン */
+        .lang-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .lang-btn {
+            background: #333;
+            color: white;
+            border: 1px solid var(--primary);
+            padding: 8px 15px;
             cursor: pointer;
+            border-radius: 5px;
+            margin-left: 5px;
             transition: 0.3s;
         }
-        .server-ip:hover { background: var(--primary-color); color: black; }
 
-        .container { max-width: 1000px; margin: auto; padding: 40px 20px; }
+        .lang-btn.active {
+            background: var(--primary);
+            color: black;
+        }
 
-        section { margin-bottom: 60px; }
-        h2 { border-left: 5px solid var(--primary-color); padding-left: 15px; margin-bottom: 30px; }
+        header {
+            padding: 100px 20px;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1587573089734-09cb69c0f2b4?q=80&w=1000');
+            background-size: cover;
+        }
 
-        /* カードデザイン */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .card {
-            background: var(--card-bg);
+        .ip-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .ip-box {
+            background: var(--card);
+            border: 2px solid var(--primary);
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: transform 0.3s;
+            cursor: pointer;
+            min-width: 250px;
+            transition: 0.3s;
         }
-        .card:hover { transform: translateY(-5px); }
-        .card h3 { color: var(--primary-color); margin-top: 0; }
 
-        /* ルールセクション */
-        .rules-list { background: var(--card-bg); padding: 25px; border-radius: 15px; }
-        .rules-list li { margin-bottom: 15px; border-bottom: 1px dotted #444; padding-bottom: 5px; list-style: none; }
-        .rules-list li span { color: #ff4d4d; font-weight: bold; margin-right: 10px; }
+        .ip-box:hover { transform: scale(1.05); background: #252525; }
 
-        footer { text-align: center; padding: 40px; color: var(--text-sub); font-size: 0.9rem; }
+        .container { max-width: 900px; margin: auto; padding: 50px 20px; }
         
-        .badge { background: #333; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; vertical-align: middle; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: var(--card); padding: 20px; border-radius: 10px; text-align: left; }
+        
+        /* 言語要素の制御 */
+        [lang="en"] { display: none; } /* 初期状態は日本語を表示 */
     </style>
 </head>
 <body>
 
-<header>
-    <h1>TanPvP</h1>
-    <p>究極のPvP体験を、あなたの手に。</p>
-    <div class="server-ip" onclick="copyIP()">IP: play.tanpvp.f5.si:25670</div>
-    <p style="font-size: 0.8rem; color: #ccc; margin-top: 10px;">クリックでIPをコピー</p>
-</header>
+    <div class="lang-switch">
+        <button class="lang-btn active" onclick="setLanguage('ja')">JP</button>
+        <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+    </div>
 
-<div class="container">
+    <header>
+        <h1 id="title-ja">TanPvP サーバー</h1>
+        <h1 id="title-en" lang="en">TanPvP Server</h1>
+        <p id="desc-ja">最強のPvP体験を今すぐ始めよう</p>
+        <p id="desc-en" lang="en">Start your ultimate PvP experience now.</p>
 
-    <section>
-        <h2>About TanPvP</h2>
-        <div class="grid">
-            <div class="card">
-                <h3>🌊 AFK Pool System</h3>
-                <p>特定の水の中に滞在することで、15分ごとに1 Killを獲得できます。放置している間もスコアを伸ばしましょう。</p>
+        <div class="ip-container">
+            <div class="ip-box" onclick="copyIP('play.tanpvp.example.com')">
+                <strong style="color:var(--primary)">Java Edition</strong><br>
+                play.tanpvp.example.com
             </div>
-            <div class="card">
-                <h3>⚔️ Custom Kits</h3>
-                <p>Default、VIP、VIP+など、多彩なキットを用意。各プレイスタイルに合わせた装備で戦場を支配せよ。</p>
-            </div>
-            <div class="card">
-                <h3>🛡️ Block Protection</h3>
-                <p>自分が設置したブロックのみ破壊可能。マップの美しさを保ちつつ、戦略的な建築が可能です。</p>
+            <div class="ip-box" onclick="copyIP('play.tanpvp.example.com', '25671')" style="border-color:var(--secondary)">
+                <strong style="color:var(--secondary)">Bedrock Edition</strong><br>
+                IP: play.tanpvp.example.com<br>
+                Port: 25671
             </div>
         </div>
-    </section>
+    </header>
 
-    <section id="rules">
-        <h2>Server Rules</h2>
-        <div class="rules-list">
-            <ul>
-                <li><span>禁止</span> チートツールの使用 (Killaura, Fly, etc...)</li>
-                <li><span>禁止</span> 意図的なラグの発生、サーバー負荷行為</li>
-                <li><span>禁止</span> 他プレイヤーへの過度な暴言、嫌がらせ</li>
-                <li><span>許可</span> 自分が設置したブロックの破壊</li>
-                <li><span>重要</span> AFKプールでの放置（推奨されています！）</li>
-            </ul>
-        </div>
-    </section>
+    <div class="container">
+        <section>
+            <h2 id="feature-title-ja">サーバーの特徴</h2>
+            <h2 id="feature-title-en" lang="en">Features</h2>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3 id="f1-ja">放置でキル獲得</h3>
+                    <h3 id="f1-en" lang="en">AFK Kill Gain</h3>
+                    <p id="f1d-ja">AFKプールに15分間滞在するだけで、1 Killを獲得できます。</p>
+                    <p id="f1d-en" lang="en">Stay in the AFK pool for 15 minutes to earn 1 Kill.</p>
+                </div>
+                <div class="card">
+                    <h3 id="f2-ja">ブロック保護</h3>
+                    <h3 id="f2-en" lang="en">Block Protect</h3>
+                    <p id="f2d-ja">自分が設置したブロックのみ破壊可能。荒らし対策も万全です。</p>
+                    <p id="f2d-en" lang="en">Only blocks you placed can be broken. Anti-grief system active.</p>
+                </div>
+            </div>
+        </section>
 
-    <section id="kits">
-        <h2>Available Kits</h2>
-        <div class="grid">
+        <section style="margin-top: 50px;">
+            <h2 id="rule-title-ja">ルール</h2>
+            <h2 id="rule-title-en" lang="en">Rules</h2>
             <div class="card">
-                <h3>Default <span class="badge">FREE</span></h3>
-                <p>鉄装備一式。全てのプレイヤーが最初から使用可能な基本セット。</p>
+                <ul id="rule-list-ja" style="list-style: none; padding: 0;">
+                    <li>❌ チート・ハック行為の禁止</li>
+                    <li>❌ サーバー負荷行為の禁止</li>
+                    <li>✅ 放置キル獲得の推奨</li>
+                </ul>
+                <ul id="rule-list-en" lang="en" style="list-style: none; padding: 0;">
+                    <li>❌ No Cheating / Hacking</li>
+                    <li>❌ No Lag-inducing activities</li>
+                    <li>✅ AFK farming is encouraged!</li>
+                </ul>
             </div>
-            <div class="card" style="border: 1px solid #ffd700;">
-                <h3>VIP+ <span class="badge" style="background:#ffd700; color: black;">RANK</span></h3>
-                <p>強力なポーション効果と、ダイヤ装備の一部が付与される上級者向けキット。</p>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 TanPvP Server</p>
+    </footer>
+
+    <script>
+        // 言語切り替えロジック
+        function setLanguage(lang) {
+            const jaElements = document.querySelectorAll('[id$="-ja"]');
+            const enElements = document.querySelectorAll('[lang="en"]');
+            const buttons = document.querySelectorAll('.lang-btn');
+
+            if (lang === 'ja') {
+                jaElements.forEach(el => el.style.display = 'block');
+                enElements.forEach(el => el.style.display = 'none');
+                buttons[0].classList.add('active');
+                buttons[1].classList.remove('active');
+            } else {
+                jaElements.forEach(el => el.style.display = 'none');
+                enElements.forEach(el => el.style.display = 'block');
+                buttons[0].classList.remove('active');
+                buttons[1].classList.add('active');
+            }
+        }
+
+        // IPコピーロジック
+        function copyIP(ip, port = "") {
+            let text = ip;
+            if (port !== "") text = ip + " Port: " + port;
+            navigator.clipboard.writeText(text).then(() => {
+                alert(ip + (port ? " Port:" + port : "") + "\nCopied!");
+            });
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TanPvP Official</title>
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #55ff55;
+            --bg: #121212;
+            --card: #1e1e1e;
+            --text: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* 言語切り替えボタン */
+        .lang-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .lang-btn {
+            background: #333;
+            color: white;
+            border: 1px solid var(--primary);
+            padding: 8px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 5px;
+            transition: 0.3s;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: black;
+        }
+
+        header {
+            padding: 100px 20px;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1587573089734-09cb69c0f2b4?q=80&w=1000');
+            background-size: cover;
+        }
+
+        .ip-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .ip-box {
+            background: var(--card);
+            border: 2px solid var(--primary);
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            min-width: 250px;
+            transition: 0.3s;
+        }
+
+        .ip-box:hover { transform: scale(1.05); background: #252525; }
+
+        .container { max-width: 900px; margin: auto; padding: 50px 20px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: var(--card); padding: 20px; border-radius: 10px; text-align: left; }
+        
+        /* 言語要素の制御 */
+        [lang="en"] { display: none; } /* 初期状態は日本語を表示 */
+    </style>
+</head>
+<body>
+
+    <div class="lang-switch">
+        <button class="lang-btn active" onclick="setLanguage('ja')">JP</button>
+        <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+    </div>
+
+    <header>
+        <h1 id="title-ja">TanPvP サーバー</h1>
+        <h1 id="title-en" lang="en">TanPvP Server</h1>
+        <p id="desc-ja">最強のPvP体験を今すぐ始めよう</p>
+        <p id="desc-en" lang="en">Start your ultimate PvP experience now.</p>
+
+        <div class="ip-container">
+            <div class="ip-box" onclick="copyIP('play.tanpvp.example.com')">
+                <strong style="color:var(--primary)">Java Edition</strong><br>
+                play.tanpvp.example.com
+            </div>
+            <div class="ip-box" onclick="copyIP('play.tanpvp.example.com', '25671')" style="border-color:var(--secondary)">
+                <strong style="color:var(--secondary)">Bedrock Edition</strong><br>
+                IP: play.tanpvp.example.com<br>
+                Port: 25671
             </div>
         </div>
-    </section>
+    </header>
 
-</div>
+    <div class="container">
+        <section>
+            <h2 id="feature-title-ja">サーバーの特徴</h2>
+            <h2 id="feature-title-en" lang="en">Features</h2>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3 id="f1-ja">放置でキル獲得</h3>
+                    <h3 id="f1-en" lang="en">AFK Kill Gain</h3>
+                    <p id="f1d-ja">AFKプールに15分間滞在するだけで、1 Killを獲得できます。</p>
+                    <p id="f1d-en" lang="en">Stay in the AFK pool for 15 minutes to earn 1 Kill.</p>
+                </div>
+                <div class="card">
+                    <h3 id="f2-ja">ブロック保護</h3>
+                    <h3 id="f2-en" lang="en">Block Protect</h3>
+                    <p id="f2d-ja">自分が設置したブロックのみ破壊可能。荒らし対策も万全です。</p>
+                    <p id="f2d-en" lang="en">Only blocks you placed can be broken. Anti-grief system active.</p>
+                </div>
+            </div>
+        </section>
 
-<footer>
-    &copy; 2026 TanPvP Server Network. Built with GitHub Pages.<br>
-    This website is not affiliated with Mojang AB.
-</footer>
+        <section style="margin-top: 50px;">
+            <h2 id="rule-title-ja">ルール</h2>
+            <h2 id="rule-title-en" lang="en">Rules</h2>
+            <div class="card">
+                <ul id="rule-list-ja" style="list-style: none; padding: 0;">
+                    <li>❌ チート・ハック行為の禁止</li>
+                    <li>❌ サーバー負荷行為の禁止</li>
+                    <li>✅ 放置キル獲得の推奨</li>
+                </ul>
+                <ul id="rule-list-en" lang="en" style="list-style: none; padding: 0;">
+                    <li>❌ No Cheating / Hacking</li>
+                    <li>❌ No Lag-inducing activities</li>
+                    <li>✅ AFK farming is encouraged!</li>
+                </ul>
+            </div>
+        </section>
+    </div>
 
-<script>
-    function copyIP() {
-        const ip = "play.tanpvp.example.com";
-        navigator.clipboard.writeText(ip).then(() => {
-            alert("サーバーIPをコピーしました！: " + ip);
-        });
-    }
-</script>
+    <footer>
+        <p>&copy; 2026 TanPvP Server</p>
+    </footer>
 
+    <script>
+        // 言語切り替えロジック
+        function setLanguage(lang) {
+            const jaElements = document.querySelectorAll('[id$="-ja"]');
+            const enElements = document.querySelectorAll('[lang="en"]');
+            const buttons = document.querySelectorAll('.lang-btn');
+
+            if (lang === 'ja') {
+                jaElements.forEach(el => el.style.display = 'block');
+                enElements.forEach(el => el.style.display = 'none');
+                buttons[0].classList.add('active');
+                buttons[1].classList.remove('active');
+            } else {
+                jaElements.forEach(el => el.style.display = 'none');
+                enElements.forEach(el => el.style.display = 'block');
+                buttons[0].classList.remove('active');
+                buttons[1].classList.add('active');
+            }
+        }
+
+        // IPコピーロジック
+        function copyIP(ip, port = "") {
+            let text = ip;
+            if (port !== "") text = ip + " Port: " + port;
+            navigator.clipboard.writeText(text).then(() => {
+                alert(ip + (port ? " Port:" + port : "") + "\nCopied!");
+            });
+        }
+    </script>
 </body>
 </html>
