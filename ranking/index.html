@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TanPvP | LIVE RANKING</title>
+    <style>
+        :root {
+            --blue: #00d4ff;
+            --red: #ff4d4d;
+            --bg: #1a1a1a;
+            --card: #252525;
+            --text: #ffffff;
+            --text-sub: #b0b0b0;
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: 
+                linear-gradient(30deg, #151515 12%, transparent 12.5%, transparent 87%, #151515 87.5%, #151515),
+                linear-gradient(150deg, #151515 12%, transparent 12.5%, transparent 87%, #151515 87.5%, #151515),
+                linear-gradient(60deg, #1c1c1c 25%, transparent 25.5%, transparent 75%, #1c1c1c 75.5%, #1c1c1c);
+            background-size: 80px 140px;
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 60px 20px;
+            padding: 40px;
+            background: rgba(37, 37, 37, 0.95);
+            border-radius: 8px;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 40px;
+            background: linear-gradient(to right, var(--blue), var(--red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 4px;
+            border-bottom: 2px solid #333;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Courier New', monospace;
+            margin-top: 20px;
+        }
+
+        th {
+            color: var(--blue);
+            text-align: left;
+            padding: 15px;
+            border-bottom: 2px solid #444;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        td {
+            padding: 20px 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .rank-num { color: var(--text-sub); font-weight: bold; width: 80px; }
+        .player-name { font-size: 1.1rem; font-weight: bold; }
+        .kill-count { color: var(--blue); font-weight: bold; }
+
+        /* Tier表示をコマンド風にする */
+        .tier-badge {
+            background: #111;
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            display: inline-block;
+            font-size: 0.85rem;
+        }
+        .tier-cmd { color: #666; margin-right: 6px; }
+        
+        .tier-GOLD { color: var(--gold); border-color: var(--gold); box-shadow: 0 0 8px rgba(255,215,0,0.15); }
+        .tier-SILVER { color: var(--silver); border-color: var(--silver); }
+        .tier-BRONZE { color: var(--bronze); border-color: var(--bronze); }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .back-link {
+            margin-top: 40px;
+            color: var(--blue);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-link:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .container { padding: 20px; }
+            th:nth-child(3), td:nth-child(3) { display: none; } /* スマホではキル数隠す等 */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>LIVE_RANKING</h1>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Player</th>
+                    <th>Kills</th>
+                    <th>Tier_Status</th>
+                </tr>
+            </thead>
+            <tbody id="ranking-data">
+                <tr><td colspan="4" style="text-align:center">SYNCHRONIZING WITH SERVER...</td></tr>
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <div id="last-update">Last Sync: ---</div>
+            <div>TanPvP Network Stats</div>
+        </div>
+    </div>
+
+    <a href="../" class="back-link">← Return to Main Hub</a>
+
+    <script>
+        async function updateRanking() {
+            try {
+                // 同じフォルダの ranking.json を読み込む
+                const response = await fetch('./ranking.json?t=' + Date.now());
+                if (!response.ok) throw new Error();
+                
+                const data = await response.json();
+                const players = Object.keys(data).map(name => ({
+                    name: name,
+                    kills: data[name].kills,
+                    tier: data[name].tier.toUpperCase()
+                })).sort((a, b) => b.kills - a.kills);
+
+                const tbody = document.getElementById('ranking-data');
+                tbody.innerHTML = '';
+
+                players.forEach((player, index) => {
+                    const row = `
+                        <tr>
+                            <td class="rank-num">#${(index + 1).toString().padStart(2, '0')}</td>
+                            <td class="player-name">${player.name}</td>
+                            <td class="kill-count">${player.kills}</td>
+                            <td>
+                                <div class="tier-badge tier-${player.tier}">
+                                    <span class="tier-cmd">/tier</span>${player.tier}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML('beforeend', row);
+                });
+
+                document.getElementById('last-update').innerText = 'Last Sync: ' + new Date().toLocaleTimeString();
+            } catch (e) {
+                document.getElementById('last-update').innerText = 'Sync Error: Data unreachable';
+            }
+        }
+
+        updateRanking();
+        setInterval(updateRanking, 60000); // 1分更新
+    </script>
+</body>
+</html>
