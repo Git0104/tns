@@ -12,9 +12,7 @@
             --card: #252525;
             --text: #ffffff;
             --text-sub: #b0b0b0;
-            --gold: #ffd700;
-            --silver: #c0c0c0;
-            --bronze: #cd7f32;
+            --money-green: #44ff44;
         }
 
         body {
@@ -80,21 +78,7 @@
         .rank-num { color: var(--text-sub); font-weight: bold; width: 80px; }
         .player-name { font-size: 1.1rem; font-weight: bold; }
         .kill-count { color: var(--blue); font-weight: bold; }
-
-        /* Tier表示をコマンド風にする */
-        .tier-badge {
-            background: #111;
-            padding: 6px 12px;
-            border-radius: 4px;
-            border: 1px solid #444;
-            display: inline-block;
-            font-size: 0.85rem;
-        }
-        .tier-cmd { color: #666; margin-right: 6px; }
-        
-        .tier-GOLD { color: var(--gold); border-color: var(--gold); box-shadow: 0 0 8px rgba(255,215,0,0.15); }
-        .tier-SILVER { color: var(--silver); border-color: var(--silver); }
-        .tier-BRONZE { color: var(--bronze); border-color: var(--bronze); }
+        .money-val { color: var(--money-green); font-weight: bold; }
 
         .footer {
             margin-top: 30px;
@@ -106,7 +90,7 @@
         }
 
         .back-link {
-            margin-top: 40px;
+            margin: 40px 0;
             color: var(--blue);
             text-decoration: none;
             font-size: 0.9rem;
@@ -116,7 +100,7 @@
         @media (max-width: 600px) {
             h1 { font-size: 2rem; }
             .container { padding: 20px; }
-            th:nth-child(3), td:nth-child(3) { display: none; } /* スマホではキル数隠す等 */
+            th:nth-child(4), td:nth-child(4) { display: none; }
         }
     </style>
 </head>
@@ -131,7 +115,7 @@
                     <th>Rank</th>
                     <th>Player</th>
                     <th>Kills</th>
-                    <th>Tier_Status</th>
+                    <th>Money</th>
                 </tr>
             </thead>
             <tbody id="ranking-data">
@@ -150,15 +134,17 @@
     <script>
         async function updateRanking() {
             try {
-                // 同じフォルダの ranking.json を読み込む
+                // データの取得
                 const response = await fetch('./ranking.json?t=' + Date.now());
-                if (!response.ok) throw new Error();
+                if (!response.ok) throw new Error("Fetch failed");
                 
                 const data = await response.json();
+                
+                // オブジェクト形式のJSONを配列に変換してソート
                 const players = Object.keys(data).map(name => ({
                     name: name,
-                    kills: data[name].kills,
-                    tier: data[name].tier.toUpperCase()
+                    kills: data[name].kills || 0,
+                    money: data[name].money || 0
                 })).sort((a, b) => b.kills - a.kills);
 
                 const tbody = document.getElementById('ranking-data');
@@ -169,12 +155,8 @@
                         <tr>
                             <td class="rank-num">#${(index + 1).toString().padStart(2, '0')}</td>
                             <td class="player-name">${player.name}</td>
-                            <td class="kill-count">${player.kills}</td>
-                            <td>
-                                <div class="tier-badge tier-${player.tier}">
-                                    <span class="tier-cmd">/tier</span>${player.tier}
-                                </div>
-                            </td>
+                            <td class="kill-count">${player.kills.toLocaleString()}</td>
+                            <td class="money-val">$${player.money.toLocaleString()}</td>
                         </tr>
                     `;
                     tbody.insertAdjacentHTML('beforeend', row);
@@ -182,12 +164,15 @@
 
                 document.getElementById('last-update').innerText = 'Last Sync: ' + new Date().toLocaleTimeString();
             } catch (e) {
+                console.error(e);
                 document.getElementById('last-update').innerText = 'Sync Error: Data unreachable';
             }
         }
 
+        // 初回実行
         updateRanking();
-        setInterval(updateRanking, 60000); // 1分更新
+        // 1分ごとに更新
+        setInterval(updateRanking, 60000);
     </script>
 </body>
 </html>
