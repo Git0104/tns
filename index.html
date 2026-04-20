@@ -72,6 +72,7 @@
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
+            margin-bottom: 30px;
         }
 
         .ip-box, .ip-box2 {
@@ -80,14 +81,33 @@
             padding: 25px;
             border-radius: 4px;
             cursor: pointer;
-            min-width: 280px;
+            min-width: 320px;
             transition: 0.2s;
         }
 
         .ip-box:hover { border-color: var(--blue); transform: translateY(-3px); }
         .ip-box2:hover { border-color: var(--red); transform: translateY(-3px); }
 
-        .ip-text { font-family: 'Courier New', monospace; background: #111; padding: 2px 8px; color: var(--text); }
+        .ip-text { font-family: 'Courier New', monospace; background: #111; padding: 4px 12px; color: var(--text); border-radius: 2px; }
+
+        .ranking-link-btn {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--blue), var(--red));
+            color: white;
+            padding: 15px 40px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            margin-top: 10px;
+        }
+
+        .ranking-link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,212,255,0.4);
+        }
 
         .container { max-width: 1000px; margin: auto; padding: 60px 20px; }
 
@@ -101,7 +121,6 @@
             margin-bottom: 40px;
         }
 
-        /* Features Grid */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         .card { 
             background: var(--card); 
@@ -112,18 +131,6 @@
         }
         .card h3 { font-family: 'Courier New', monospace; margin-top: 0; color: var(--blue); }
 
-        /* Ranking Table */
-        .ranking-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--card);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .ranking-table th { background: #333; padding: 15px; color: var(--blue); }
-        .ranking-table td { padding: 15px; border-bottom: 1px solid #333; }
-
-        /* Rules Card */
         .rule-card { 
             background: var(--card); 
             padding: 40px; 
@@ -147,20 +154,23 @@
         <h1>TanPvP</h1>
         <div id="status-dot"></div>
     </div>
-    <div id="online-count">PINGING SERVER...</div>
+    <div id="online-count">CONNECTING...</div>
 
     <div class="ip-container">
-        <div class="ip-box" onclick="copyIP('tanpvp.f5.si')">
-            <strong style="color:var(--blue)">[JAVA]</strong>
-            <span class="ip-text">tanpvp.f5.si</span>
-            <div style="font-size: 0.7rem; color: #666; margin-top:10px;">- Click to copy -</div>
+        <div class="ip-box" onclick="copyIP('tanpvp.f5.si:25670')">
+            <strong style="color:var(--blue); margin-bottom: 10px;">[JAVA]</strong>
+            <span class="ip-text">tanpvp.f5.si:25670</span>
+            <div style="font-size: 0.7rem; color: #666; margin-top:15px;">- Click to copy -</div>
         </div>
         <div class="ip-box2" onclick="copyIP('tanpvp.f5.si', '25671')">
-            <strong style="color:var(--red)">[BEDROCK]</strong>
+            <strong style="color:var(--red); margin-bottom: 10px;">[BEDROCK]</strong>
             <span class="ip-text">tanpvp.f5.si</span><br>
-            <span class="ip-text" style="color:#ffeb3b !important; margin-top:5px;">Port: 25671</span>
+            <span class="ip-text" style="color:#ffeb3b !important; display: inline-block; margin-top:8px;">Port: 25671</span>
+            <div style="font-size: 0.7rem; color: #666; margin-top:15px;">- Click to copy -</div>
         </div>
     </div>
+
+    <a href="/ranking" class="ranking-link-btn">VIEW FULL RANKING →</a>
 </header>
 
 <div class="container">
@@ -176,27 +186,10 @@
                 <p>Advanced Region-Protect system. Your base is safe within the designated protected areas.</p>
             </div>
             <div class="card">
-                <h3>// WEB_RANKING</h3>
-                <p>Real-time player statistics synced directly from the server to this website.</p>
+                <h3>// STATS_SYNC</h3>
+                <p>Server data is live-synced. Check your position on the leaderboard anytime.</p>
             </div>
         </div>
-    </section>
-
-    <section>
-        <h2>TOP RANKING</h2>
-        <table class="ranking-table">
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Player</th>
-                    <th>Kills</th>
-                    <th>Tier</th>
-                </tr>
-            </thead>
-            <tbody id="ranking-body">
-                <tr><td colspan="4">Loading leaderboard...</td></tr>
-            </tbody>
-        </table>
     </section>
 
     <section id="rules">
@@ -213,63 +206,78 @@
 </div>
 
 <footer>
-    <div class="footer-content">
-        &copy; 2026 TanPvP Network. All Rights Reserved.<br><br>
-        Established 2026 // Global PvP Hub<br>
-        <span style="font-size: 0.6rem;">NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.</span>
-    </div>
+    &copy; 2026 TanPvP Network. All Rights Reserved.<br><br>
+    Main Connection: tanpvp.f5.si:25670 // Global PvP Hub
 </footer>
 
 <script>
-    const SERVER_IP = '163.245.194.58';
-    const SERVER_PORT = '25670';
+    // 内部的なステータスチェックには実体IPを使用（確実性が高いため）
+    const STATUS_CHECK_TARGET = '163.245.194.58:25670';
 
+    // 確実にコピーするための関数
     function copyIP(ip, port = "") {
         let text = port ? `${ip}:${port}` : ip;
-        navigator.clipboard.writeText(text).then(() => alert("Copied: " + text));
+
+        // 1. 最新のAPIを試みる
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Copied: " + text);
+            }).catch(err => {
+                fallbackCopy(text);
+            });
+        } else {
+            // 2. 非セーフコンテキスト（http等）や古いブラウザ向けの予備動作
+            fallbackCopy(text);
+        }
+    }
+
+    // 予備のコピー手法（見えないテキストエリアを作る）
+    function fallbackCopy(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        
+        // 画面外に配置
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        
+        textArea.focus();
+        textArea.select();
+
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                alert("Copied: " + text);
+            } else {
+                alert("Manual copy required: " + text);
+            }
+        } catch (err) {
+            alert("Manual copy required: " + text);
+        }
+
+        document.body.removeChild(textArea);
     }
 
     async function updateStatus() {
         const dot = document.getElementById('status-dot');
         const countText = document.getElementById('online-count');
         try {
-            const res = await fetch(`https://api.mcstatus.io/v2/status/java/${SERVER_IP}:${SERVER_PORT}`);
+            const res = await fetch(`https://api.mcstatus.io/v2/status/java/${STATUS_CHECK_TARGET}`);
             const data = await res.json();
             if (data.online) {
                 dot.style.backgroundColor = '#2ecc71';
                 dot.style.boxShadow = '0 0 15px #2ecc71';
-                countText.innerText = `ONLINE // ${data.players.online} PLAYERS`;
+                countText.innerText = `ONLINE // ${data.players.online} PLAYERS NOW`;
             } else {
                 dot.style.backgroundColor = '#ff4d4d';
                 dot.style.boxShadow = '0 0 15px #ff4d4d';
-                countText.innerText = 'OFFLINE // MAINTENANCE';
+                countText.innerText = 'OFFLINE // MAINTENANCE MODE';
             }
         } catch (e) { countText.innerText = 'STATUS UNKNOWN'; }
     }
 
-    async function loadRanking() {
-        const body = document.getElementById('ranking-body');
-        try {
-            const res = await fetch('ranking.json');
-            const data = await res.json();
-            const sorted = Object.entries(data).sort((a, b) => b[1].kills - a[1].kills);
-            
-            body.innerHTML = '';
-            sorted.slice(0, 10).forEach(([name, stats], index) => {
-                body.innerHTML += `
-                    <tr>
-                        <td>#${index + 1}</td>
-                        <td>${name}</td>
-                        <td>${stats.kills}</td>
-                        <td><strong>${stats.tier}</strong></td>
-                    </tr>
-                `;
-            });
-        } catch (e) { body.innerHTML = '<tr><td colspan="4">No data available.</td></tr>'; }
-    }
-
     updateStatus();
-    loadRanking();
     setInterval(updateStatus, 60000);
 </script>
 
