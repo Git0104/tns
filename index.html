@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TanPvP | Pure PvP Battlefield</title>
+    <link id="favicon" rel="icon" href="online.png" type="image/png">
     <style>
         :root {
             --blue: #00d4ff;
@@ -216,24 +217,48 @@
     const STATUS_CHECK_TARGET = '163.245.194.58:25670';
 
     /**
+     * プログラムで丸いアイコン（ファビコン）を生成する関数
+     */
+    function updateFavicon(color) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 64;
+        canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+
+        // 背景を透明にして丸を描画
+        ctx.clearRect(0, 0, 64, 64);
+        ctx.beginPath();
+        ctx.arc(32, 32, 30, 0, 2 * Math.PI);
+        ctx.fillStyle = color;
+        ctx.fill();
+
+        // 縁取り（少し暗くして見やすく）
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+        ctx.stroke();
+
+        // linkタグ（favicon）のhrefを差し替え
+        const favicon = document.getElementById('favicon');
+        if (favicon) {
+            favicon.href = canvas.toDataURL('image/png');
+        }
+    }
+
+    /**
      * コピーメイン関数
      */
     function copyIP(ip, port = "") {
-        // コピーするテキストの組み立て
         const textToCopy = port ? `${ip}:${port}` : ip;
 
-        // 1. まずは一番確実な方法を試す
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(textToCopy)
                 .then(() => {
                     alert("Copied: " + textToCopy);
                 })
                 .catch(() => {
-                    // APIが失敗した場合はフォールバックへ
                     useFallback(textToCopy);
                 });
         } else {
-            // HTTPSじゃない場合やAPI未対応ブラウザ
             useFallback(textToCopy);
         }
     }
@@ -244,8 +269,6 @@
     function useFallback(text) {
         const textArea = document.createElement("textarea");
         textArea.value = text;
-        
-        // 完全に画面外へ飛ばし、かつユーザーの画面に影響を与えない設定
         textArea.style.position = "fixed";
         textArea.style.left = "-9999px";
         textArea.style.top = "0";
@@ -260,13 +283,11 @@
             if (successful) {
                 alert("Copied: " + text);
             } else {
-                // ここまで来るとブラウザの制限
                 prompt("Could not copy automatically. Please copy this:", text);
             }
         } catch (err) {
             prompt("Could not copy automatically. Please copy this:", text);
         }
-
         document.body.removeChild(textArea);
     }
 
@@ -278,33 +299,42 @@
         const countText = document.getElementById('online-count');
         
         try {
-            // APIからステータスを取得
             const res = await fetch(`https://api.mcstatus.io/v2/status/java/${STATUS_CHECK_TARGET}`);
             if (!res.ok) throw new Error('API Error');
             
             const data = await res.json();
             
             if (data.online) {
-                dot.style.backgroundColor = 'var(--green)';
-                dot.style.boxShadow = '0 0 15px var(--green)';
+                const colorGreen = '#2ecc71';
+                // サイト内の表示更新
+                dot.style.backgroundColor = colorGreen;
+                dot.style.boxShadow = `0 0 15px ${colorGreen}`;
                 countText.innerText = `ONLINE // ${data.players.online} PLAYERS NOW`;
-                countText.style.color = 'var(--green)';
+                countText.style.color = colorGreen;
+                
+                // タブのアイコン更新
+                updateFavicon(colorGreen);
             } else {
-                dot.style.backgroundColor = 'var(--red)';
-                dot.style.boxShadow = '0 0 15px var(--red)';
+                const colorRed = '#ff4d4d';
+                // サイト内の表示更新
+                dot.style.backgroundColor = colorRed;
+                dot.style.boxShadow = `0 0 15px ${colorRed}`;
                 countText.innerText = 'OFFLINE // MAINTENANCE MODE';
-                countText.style.color = 'var(--red)';
+                countText.style.color = colorRed;
+                
+                // タブのアイコン更新
+                updateFavicon(colorRed);
             }
         } catch (e) {
             countText.innerText = 'STATUS UNKNOWN';
             countText.style.color = 'var(--text-sub)';
+            updateFavicon('#555555'); // 失敗時はグレー
         }
     }
 
-    // 初回実行と定期更新の設定
+    // 初回実行と定期更新
     updateStatus();
-    setInterval(updateStatus, 60000); // 60秒ごとに更新
+    setInterval(updateStatus, 60000);
 </script>
-
 </body>
 </html>
