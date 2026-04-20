@@ -211,35 +211,44 @@
 </footer>
 
 <script>
-    // 内部的なステータスチェックには実体IPを使用（確実性が高いため）
+    // 内部的なステータスチェック用IP
     const STATUS_CHECK_TARGET = '163.245.194.58:25670';
 
-    // 確実にコピーするための関数
+    /**
+     * コピーメイン関数
+     */
     function copyIP(ip, port = "") {
-        let text = port ? `${ip}:${port}` : ip;
+        // コピーするテキストの組み立て
+        const textToCopy = port ? `${ip}:${port}` : ip;
 
-        // 1. 最新のAPIを試みる
+        // 1. まずは一番確実な方法を試す
         if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Copied: " + text);
-            }).catch(err => {
-                fallbackCopy(text);
-            });
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    alert("Copied: " + textToCopy);
+                })
+                .catch(() => {
+                    // APIが失敗した場合はフォールバックへ
+                    useFallback(textToCopy);
+                });
         } else {
-            // 2. 非セーフコンテキスト（http等）や古いブラウザ向けの予備動作
-            fallbackCopy(text);
+            // HTTPSじゃない場合やAPI未対応ブラウザ
+            useFallback(textToCopy);
         }
     }
 
-    // 予備のコピー手法（見えないテキストエリアを作る）
-    function fallbackCopy(text) {
+    /**
+     * フォールバック（古いブラウザやHTTP環境用）
+     */
+    function useFallback(text) {
         const textArea = document.createElement("textarea");
         textArea.value = text;
         
-        // 画面外に配置
+        // 完全に画面外へ飛ばし、かつユーザーの画面に影響を与えない設定
         textArea.style.position = "fixed";
-        textArea.style.left = "-999999px";
-        textArea.style.top = "-999999px";
+        textArea.style.left = "-9999px";
+        textArea.style.top = "0";
+        textArea.style.opacity = "0";
         document.body.appendChild(textArea);
         
         textArea.focus();
@@ -250,35 +259,50 @@
             if (successful) {
                 alert("Copied: " + text);
             } else {
-                alert("Manual copy required: " + text);
+                // ここまで来るとブラウザの制限
+                prompt("Could not copy automatically. Please copy this:", text);
             }
         } catch (err) {
-            alert("Manual copy required: " + text);
+            prompt("Could not copy automatically. Please copy this:", text);
         }
 
         document.body.removeChild(textArea);
     }
 
+    /**
+     * サーバー稼働状況の更新
+     */
     async function updateStatus() {
         const dot = document.getElementById('status-dot');
         const countText = document.getElementById('online-count');
+        
         try {
+            // APIからステータスを取得
             const res = await fetch(`https://api.mcstatus.io/v2/status/java/${STATUS_CHECK_TARGET}`);
+            if (!res.ok) throw new Error('API Error');
+            
             const data = await res.json();
+            
             if (data.online) {
-                dot.style.backgroundColor = '#2ecc71';
-                dot.style.boxShadow = '0 0 15px #2ecc71';
+                dot.style.backgroundColor = 'var(--green)';
+                dot.style.boxShadow = '0 0 15px var(--green)';
                 countText.innerText = `ONLINE // ${data.players.online} PLAYERS NOW`;
+                countText.style.color = 'var(--green)';
             } else {
-                dot.style.backgroundColor = '#ff4d4d';
-                dot.style.boxShadow = '0 0 15px #ff4d4d';
+                dot.style.backgroundColor = 'var(--red)';
+                dot.style.boxShadow = '0 0 15px var(--red)';
                 countText.innerText = 'OFFLINE // MAINTENANCE MODE';
+                countText.style.color = 'var(--red)';
             }
-        } catch (e) { countText.innerText = 'STATUS UNKNOWN'; }
+        } catch (e) {
+            countText.innerText = 'STATUS UNKNOWN';
+            countText.style.color = 'var(--text-sub)';
+        }
     }
 
+    // 初回実行と定期更新の設定
     updateStatus();
-    setInterval(updateStatus, 60000);
+    setInterval(updateStatus, 60000); // 60秒ごとに更新
 </script>
 
 </body>
