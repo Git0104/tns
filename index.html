@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="format-detection" content="telephone=no, address=no, email=no">
     <title>TanPvP | Pure PvP Battlefield</title>
     <style>
         :root {
             --blue: #00d4ff;
             --red: #ff4d4d;
+            --green: #2ecc71;
             --bg: #1a1a1a;
             --card: #252525;
             --text: #ffffff;
@@ -17,7 +17,6 @@
 
         body {
             background-color: var(--bg);
-            /* 石畳風の幾何学パターン */
             background-image: 
                 linear-gradient(30deg, #151515 12%, transparent 12.5%, transparent 87%, #151515 87.5%, #151515),
                 linear-gradient(150deg, #151515 12%, transparent 12.5%, transparent 87%, #151515 87.5%, #151515),
@@ -26,14 +25,20 @@
             color: var(--text);
             font-family: 'Segoe UI', sans-serif;
             margin: 0;
-            line-height: 1.6;
             text-align: center;
         }
 
         header {
-            padding: 150px 20px;
+            padding: 100px 20px;
             background: linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(255,77,77,0.1) 100%);
             border-bottom: 2px solid #333;
+        }
+
+        .title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
         }
 
         h1 { 
@@ -42,184 +47,172 @@
             background: linear-gradient(to right, var(--blue), var(--red));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
         }
 
-        .hero-desc { font-family: 'Courier New', monospace; color: var(--text-sub); margin-top: 10px; }
+        #status-dot {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #555;
+            transition: 0.5s;
+            margin-top: 10px;
+        }
+
+        #online-count {
+            font-family: 'Courier New', monospace;
+            color: var(--text-sub);
+            margin-bottom: 30px;
+        }
 
         .ip-container {
             display: flex;
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
-            margin-top: 50px;
         }
 
-        .ip-box {
+        .ip-box, .ip-box2 {
             background: var(--card);
             border: 2px solid #444;
-            padding: 25px;
+            padding: 20px;
             border-radius: 4px;
             cursor: pointer;
             min-width: 280px;
             transition: 0.2s;
         }
 
-        .ip-box2 {
-            background: var(--card);
-            border: 2px solid #444;
-            padding: 25px;
-            border-radius: 4px;
-            cursor: pointer;
-            min-width: 280px;
-            transition: 0.2s;
-        }
+        .ip-box:hover { border-color: var(--blue); box-shadow: 0 0 15px rgba(0,212,255,0.2); }
+        .ip-box2:hover { border-color: var(--red); box-shadow: 0 0 15px rgba(255,77,77,0.2); }
 
-        .ip-box:hover {
-            transform: translateY(-3px);
-            border-color: var(--blue);
-            box-shadow: 0 0 20px rgba(0,212,255,0.2);
-        }
-
-        .ip-box2:hover {
-            transform: translateY(-3px);
-            border-color: var(--red);
-            box-shadow: 0 0 20px rgba(0,212,255,0.2);
-        }
-
-
-        /* URLが青くなるのを防ぐための設定 */
-        .ip-text {
-            color: var(--text) !important;
-            text-decoration: none !important;
-            font-family: 'Courier New', monospace;
-            font-size: 1.1rem;
-            background: #111;
-            padding: 2px 8px;
-            display: inline-block;
-            pointer-events: none; /* テキストとしてのリンク反応を殺す */
-        }
-
-        .ip-box strong { font-size: 1.2rem; display: block; margin-bottom: 10px; }
-
-        .ip-box2 strong { font-size: 1.2rem; display: block; margin-bottom: 10px; }
+        .ip-text { font-family: 'Courier New', monospace; background: #111; padding: 2px 8px; }
 
         .container { max-width: 1000px; margin: auto; padding: 60px 20px; }
-        
-        section { margin-bottom: 80px; }
-        h2 { 
-            font-size: 2.2rem; 
-            letter-spacing: 2px;
-            border-bottom: 3px solid var(--blue);
-            display: inline-block;
-            margin-bottom: 40px;
+
+        /* Ranking Table Style */
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        
-        .card { 
-            background: var(--card); 
-            padding: 30px; 
-            border-radius: 4px; 
-            text-align: left; 
-            border-left: 5px solid #444;
-        }
+        .ranking-table th { background: #333; padding: 15px; color: var(--blue); }
+        .ranking-table td { padding: 15px; border-bottom: 1px solid #333; }
+        .ranking-table tr:hover { background: #2d2d2d; }
 
-        .card h3 { font-family: 'Courier New', monospace; margin-top: 0; }
+        .tier-gold { color: #ffd700; font-weight: bold; }
+        .tier-silver { color: #c0c0c0; font-weight: bold; }
 
-        .rule-card { 
-            background: var(--card); 
-            padding: 40px; 
-            border-radius: 4px; 
-            text-align: left; 
-            max-width: 600px; 
-            margin: auto;
-            border: 1px solid #333;
-        }
-
-        .rule-card ul { list-style: none; padding: 0; font-family: 'Courier New', monospace; }
-        .rule-card li { margin-bottom: 15px; }
-        .rule-card li span { color: var(--red); font-weight: bold; margin-right: 10px; }
-
-        footer { padding: 50px; border-top: 2px solid #333; color: #555; font-size: 0.8rem; }
-        
-        .copy-hint { font-size: 0.7rem; color: #666; margin-top: 15px; }
+        footer { padding: 50px; color: #555; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-    <header>
+<header>
+    <div class="title-container">
         <h1>TanPvP</h1>
-
-        <div class="ip-container">
-            <div class="ip-box" onclick="copyIP('play.tanpvp.example.com')">
-                <strong style="color:var(--blue)">[JAVA]</strong>
-                <span class="ip-text">play.tanpvp.example.com</span>
-                <div class="copy-hint">- Click to copy -</div>
-            </div>
-
-            <div class="ip-box2" onclick="copyIP('play.tanpvp.example.com', '25671')" ">
-                <strong style="color:var(--red)">[BEDROCK]</strong>
-                <span class="ip-text">play.tanpvp.example.com</span><br>
-                <span class="ip-text" style="color:#ffeb3b !important; margin-top:5px;">Port: 25671</span>
-                <div class="copy-hint">- Click to copy -</div>
-            </div>
-        </div>
-    </header>
-
-    <div class="container">
-        <section>
-            <h2>FEATURES</h2>
-            <div class="grid">
-                <div class="card">
-                    <h3>// AFK_SYSTEM</h3>
-                    <p>Get +1 Kill every 15 mins in the AFK Pool. Level up while resting.</p>
-                </div>
-                <div class="card">
-                    <h3>// PROTECTION</h3>
-                    <p>Block-Protect system active. Your buildings are safe from others.</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="rules">
-            <h2>RULES</h2>
-            <div class="rule-card">
-                <ul>
-                    <li><span>[!]</span> No Cheating / Hacks</li>
-                    <li><span>[!]</span> No Server Lagging</li>
-                    <li><span>[*]</span> AFK Farming Allowed</li>
-                </ul>
-            </div>
-        </section>
+        <div id="status-dot" title="Server Status"></div>
     </div>
+    <div id="online-count">FETCHING STATUS...</div>
 
-    <footer>
-    <div class="footer-content">
-        <div class="copyright">
-            &copy; 2026 TanPvP Network. All Rights Reserved.
+    <div class="ip-container">
+        <div class="ip-box" onclick="copyIP('tanpvp.f5.si')">
+            <strong style="color:var(--blue)">[JAVA]</strong>
+            <span class="ip-text">tanpvp.f5.si</span>
+            <div style="font-size: 0.7rem; color: #666; margin-top:10px;">Port: 25670 (Auto)</div>
         </div>
-        <div class="status">
-            Established 2026 // Global PvP Hub
-        </div>
-        <div class="disclaimer">
-            NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
+        <div class="ip-box2" onclick="copyIP('tanpvp.f5.si', '25671')">
+            <strong style="color:var(--red)">[BEDROCK]</strong>
+            <span class="ip-text">tanpvp.f5.si</span><br>
+            <span class="ip-text" style="color:#ffeb3b !important; margin-top:5px;">Port: 25671</span>
         </div>
     </div>
+</header>
+
+<div class="container">
+    <section>
+        <h2>TOP RANKING</h2>
+        <table class="ranking-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Player</th>
+                    <th>Kills</th>
+                    <th>Tier</th>
+                </tr>
+            </thead>
+            <tbody id="ranking-body">
+                <tr><td colspan="4">Loading data...</td></tr>
+            </tbody>
+        </table>
+    </section>
+</div>
+
+<footer>
+    &copy; 2026 TanPvP Network. Established 2026 // Global PvP Hub
 </footer>
 
+<script>
+    const SERVER_IP = 'tanpvp.f5.si';
+    const SERVER_PORT = '25670';
 
+    // 1. コピー機能
+    function copyIP(ip, port = "") {
+        let text = port ? `${ip}:${port}` : ip;
+        navigator.clipboard.writeText(text).then(() => alert("Copied: " + text));
+    }
 
-    <script>
-        function copyIP(ip, port = "") {
-            let text = ip;
-            if (port !== "") text = ip + " \n(Port: " + port + ")";
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Copied: " + text);
-            }).catch(() => {
-                alert("Please copy manually: " + text);
+    // 2. サーバー稼働状況 (MC-Status API)
+    async function updateStatus() {
+        const dot = document.getElementById('status-dot');
+        const countText = document.getElementById('online-count');
+        try {
+            const res = await fetch(`https://api.mcstatus.io/v2/status/java/${SERVER_IP}:${SERVER_PORT}`);
+            const data = await res.json();
+            if (data.online) {
+                dot.style.backgroundColor = '#2ecc71';
+                dot.style.boxShadow = '0 0 15px #2ecc71';
+                countText.innerText = `ONLINE // Players: ${data.players.online} / ${data.players.max}`;
+            } else {
+                dot.style.backgroundColor = '#ff4d4d';
+                dot.style.boxShadow = '0 0 15px #ff4d4d';
+                countText.innerText = 'OFFLINE // Under Maintenance';
+            }
+        } catch (e) { countText.innerText = 'STATUS UNKNOWN'; }
+    }
+
+    // 3. ランキング読み込み (ranking.json)
+    async function loadRanking() {
+        const body = document.getElementById('ranking-body');
+        try {
+            const res = await fetch('ranking.json');
+            const data = await res.json();
+            
+            // データをキル数順にソート
+            const sorted = Object.entries(data).sort((a, b) => b[1].kills - a[1].kills);
+            
+            body.innerHTML = '';
+            sorted.forEach(([name, stats], index) => {
+                const tierClass = `tier-${stats.tier.toLowerCase()}`;
+                body.innerHTML += `
+                    <tr>
+                        <td>#${index + 1}</td>
+                        <td>${name}</td>
+                        <td>${stats.kills}</td>
+                        <td class="${tierClass}">${stats.tier}</td>
+                    </tr>
+                `;
             });
-        }
-    </script>
+        } catch (e) { body.innerHTML = '<tr><td colspan="4">No data available yet.</td></tr>'; }
+    }
+
+    // 初期化
+    updateStatus();
+    loadRanking();
+    setInterval(updateStatus, 60000); // 1分ごとに更新
+</script>
+
 </body>
 </html>
