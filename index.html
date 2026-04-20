@@ -25,11 +25,12 @@
             color: var(--text);
             font-family: 'Segoe UI', sans-serif;
             margin: 0;
+            line-height: 1.6;
             text-align: center;
         }
 
         header {
-            padding: 100px 20px;
+            padding: 120px 20px;
             background: linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(255,77,77,0.1) 100%);
             border-bottom: 2px solid #333;
         }
@@ -47,6 +48,7 @@
             background: linear-gradient(to right, var(--blue), var(--red));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
         }
 
         #status-dot {
@@ -61,7 +63,8 @@
         #online-count {
             font-family: 'Courier New', monospace;
             color: var(--text-sub);
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            font-weight: bold;
         }
 
         .ip-container {
@@ -74,38 +77,67 @@
         .ip-box, .ip-box2 {
             background: var(--card);
             border: 2px solid #444;
-            padding: 20px;
+            padding: 25px;
             border-radius: 4px;
             cursor: pointer;
             min-width: 280px;
             transition: 0.2s;
         }
 
-        .ip-box:hover { border-color: var(--blue); box-shadow: 0 0 15px rgba(0,212,255,0.2); }
-        .ip-box2:hover { border-color: var(--red); box-shadow: 0 0 15px rgba(255,77,77,0.2); }
+        .ip-box:hover { border-color: var(--blue); transform: translateY(-3px); }
+        .ip-box2:hover { border-color: var(--red); transform: translateY(-3px); }
 
-        .ip-text { font-family: 'Courier New', monospace; background: #111; padding: 2px 8px; }
+        .ip-text { font-family: 'Courier New', monospace; background: #111; padding: 2px 8px; color: var(--text); }
 
         .container { max-width: 1000px; margin: auto; padding: 60px 20px; }
 
-        /* Ranking Table Style */
+        section { margin-bottom: 100px; }
+
+        h2 { 
+            font-size: 2.2rem; 
+            letter-spacing: 2px;
+            border-bottom: 3px solid var(--blue);
+            display: inline-block;
+            margin-bottom: 40px;
+        }
+
+        /* Features Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .card { 
+            background: var(--card); 
+            padding: 30px; 
+            border-radius: 4px; 
+            text-align: left; 
+            border-left: 5px solid #444;
+        }
+        .card h3 { font-family: 'Courier New', monospace; margin-top: 0; color: var(--blue); }
+
+        /* Ranking Table */
         .ranking-table {
             width: 100%;
             border-collapse: collapse;
             background: var(--card);
-            margin-top: 20px;
             border-radius: 8px;
             overflow: hidden;
         }
-
         .ranking-table th { background: #333; padding: 15px; color: var(--blue); }
         .ranking-table td { padding: 15px; border-bottom: 1px solid #333; }
-        .ranking-table tr:hover { background: #2d2d2d; }
 
-        .tier-gold { color: #ffd700; font-weight: bold; }
-        .tier-silver { color: #c0c0c0; font-weight: bold; }
+        /* Rules Card */
+        .rule-card { 
+            background: var(--card); 
+            padding: 40px; 
+            border-radius: 4px; 
+            text-align: left; 
+            max-width: 600px; 
+            margin: auto;
+            border: 1px solid #333;
+        }
+        .rule-card ul { list-style: none; padding: 0; font-family: 'Courier New', monospace; }
+        .rule-card li { margin-bottom: 15px; }
+        .rule-card li span { color: var(--red); font-weight: bold; margin-right: 10px; }
 
-        footer { padding: 50px; color: #555; font-size: 0.8rem; }
+        footer { padding: 80px; border-top: 2px solid #333; color: #555; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -113,15 +145,15 @@
 <header>
     <div class="title-container">
         <h1>TanPvP</h1>
-        <div id="status-dot" title="Server Status"></div>
+        <div id="status-dot"></div>
     </div>
-    <div id="online-count">FETCHING STATUS...</div>
+    <div id="online-count">PINGING SERVER...</div>
 
     <div class="ip-container">
         <div class="ip-box" onclick="copyIP('tanpvp.f5.si')">
             <strong style="color:var(--blue)">[JAVA]</strong>
             <span class="ip-text">tanpvp.f5.si</span>
-            <div style="font-size: 0.7rem; color: #666; margin-top:10px;">Port: 25670 (Auto)</div>
+            <div style="font-size: 0.7rem; color: #666; margin-top:10px;">- Click to copy -</div>
         </div>
         <div class="ip-box2" onclick="copyIP('tanpvp.f5.si', '25671')">
             <strong style="color:var(--red)">[BEDROCK]</strong>
@@ -132,6 +164,24 @@
 </header>
 
 <div class="container">
+    <section>
+        <h2>FEATURES</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>// AFK_SYSTEM</h3>
+                <p>Get +1 Kill every 15 mins in the AFK Pool. Level up your rank even while resting.</p>
+            </div>
+            <div class="card">
+                <h3>// PROTECTION</h3>
+                <p>Advanced Region-Protect system. Your base is safe within the designated protected areas.</p>
+            </div>
+            <div class="card">
+                <h3>// WEB_RANKING</h3>
+                <p>Real-time player statistics synced directly from the server to this website.</p>
+            </div>
+        </div>
+    </section>
+
     <section>
         <h2>TOP RANKING</h2>
         <table class="ranking-table">
@@ -144,27 +194,41 @@
                 </tr>
             </thead>
             <tbody id="ranking-body">
-                <tr><td colspan="4">Loading data...</td></tr>
+                <tr><td colspan="4">Loading leaderboard...</td></tr>
             </tbody>
         </table>
+    </section>
+
+    <section id="rules">
+        <h2>RULES</h2>
+        <div class="rule-card">
+            <ul>
+                <li><span>[!]</span> No Cheating / Hacks / Unfair Clients</li>
+                <li><span>[!]</span> No Intentional Server Lagging</li>
+                <li><span>[!]</span> Respect all players in chat</li>
+                <li><span>[*]</span> AFK Farming is Allowed in Pool</li>
+            </ul>
+        </div>
     </section>
 </div>
 
 <footer>
-    &copy; 2026 TanPvP Network. Established 2026 // Global PvP Hub
+    <div class="footer-content">
+        &copy; 2026 TanPvP Network. All Rights Reserved.<br><br>
+        Established 2026 // Global PvP Hub<br>
+        <span style="font-size: 0.6rem;">NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.</span>
+    </div>
 </footer>
 
 <script>
-    const SERVER_IP = 'tanpvp.f5.si';
+    const SERVER_IP = '163.245.194.58';
     const SERVER_PORT = '25670';
 
-    // 1. コピー機能
     function copyIP(ip, port = "") {
         let text = port ? `${ip}:${port}` : ip;
         navigator.clipboard.writeText(text).then(() => alert("Copied: " + text));
     }
 
-    // 2. サーバー稼働状況 (MC-Status API)
     async function updateStatus() {
         const dot = document.getElementById('status-dot');
         const countText = document.getElementById('online-count');
@@ -174,44 +238,39 @@
             if (data.online) {
                 dot.style.backgroundColor = '#2ecc71';
                 dot.style.boxShadow = '0 0 15px #2ecc71';
-                countText.innerText = `ONLINE // Players: ${data.players.online} / ${data.players.max}`;
+                countText.innerText = `ONLINE // ${data.players.online} PLAYERS`;
             } else {
                 dot.style.backgroundColor = '#ff4d4d';
                 dot.style.boxShadow = '0 0 15px #ff4d4d';
-                countText.innerText = 'OFFLINE // Under Maintenance';
+                countText.innerText = 'OFFLINE // MAINTENANCE';
             }
         } catch (e) { countText.innerText = 'STATUS UNKNOWN'; }
     }
 
-    // 3. ランキング読み込み (ranking.json)
     async function loadRanking() {
         const body = document.getElementById('ranking-body');
         try {
             const res = await fetch('ranking.json');
             const data = await res.json();
-            
-            // データをキル数順にソート
             const sorted = Object.entries(data).sort((a, b) => b[1].kills - a[1].kills);
             
             body.innerHTML = '';
-            sorted.forEach(([name, stats], index) => {
-                const tierClass = `tier-${stats.tier.toLowerCase()}`;
+            sorted.slice(0, 10).forEach(([name, stats], index) => {
                 body.innerHTML += `
                     <tr>
                         <td>#${index + 1}</td>
                         <td>${name}</td>
                         <td>${stats.kills}</td>
-                        <td class="${tierClass}">${stats.tier}</td>
+                        <td><strong>${stats.tier}</strong></td>
                     </tr>
                 `;
             });
-        } catch (e) { body.innerHTML = '<tr><td colspan="4">No data available yet.</td></tr>'; }
+        } catch (e) { body.innerHTML = '<tr><td colspan="4">No data available.</td></tr>'; }
     }
 
-    // 初期化
     updateStatus();
     loadRanking();
-    setInterval(updateStatus, 60000); // 1分ごとに更新
+    setInterval(updateStatus, 60000);
 </script>
 
 </body>
