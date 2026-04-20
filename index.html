@@ -225,19 +225,27 @@
         canvas.height = 64;
         const ctx = canvas.getContext('2d');
 
-        // 背景を透明にして丸を描画
+        // 1. 背景をクリア
         ctx.clearRect(0, 0, 64, 64);
+
+        // 2. 発光エフェクト（グラデーション）
+        const centerX = 32;
+        const centerY = 32;
+        const radius = 30;
+
+        // 中心から外側に向かうグラデーション
+        const gradient = ctx.createRadialGradient(centerX, centerY, 5, centerX, centerY, radius);
+        gradient.addColorStop(0, '#ffffff');    // 中心は白っぽく光らせる
+        gradient.addColorStop(0.2, color);      // 指定の色
+        gradient.addColorStop(1, 'transparent'); // 外側に向けて透明に消えていく
+
+        // 3. 描画
+        ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.arc(32, 32, 30, 0, 2 * Math.PI);
-        ctx.fillStyle = color;
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
         ctx.fill();
 
-        // 縁取り（少し暗くして見やすく）
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = 'rgba(0,0,0,0.2)';
-        ctx.stroke();
-
-        // linkタグ（favicon）のhrefを差し替え
+        // 4. linkタグ（favicon）のhrefを差し替え
         const favicon = document.getElementById('favicon');
         if (favicon) {
             favicon.href = canvas.toDataURL('image/png');
